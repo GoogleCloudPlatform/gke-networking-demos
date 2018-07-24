@@ -40,3 +40,6 @@ OSX, Linux and using Google Cloud Console are supported.
 1. The [network](network) folder contains the manifest files and deployment manager templates to setup networks.
 1. The [clusters](clusters) folder contains the manifest files and deployment manager templates to create Kubernetes Engine clusters.
 1. The [manifests](clusters) folder contains the manifest files to create Kubernetes Engine services.
+
+
+**This is not an officially supported Google product**
