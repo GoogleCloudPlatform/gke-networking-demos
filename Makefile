@@ -57,4 +57,3 @@ check_trailing_whitespace:
 check_headers:
 	@echo "Checking file headers"
 	@python test/verify_boilerplate.py
-
