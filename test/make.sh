@@ -79,7 +79,7 @@ function check_shell() {
 # There are some exclusions
 function check_trailing_whitespace() {
   echo "The following lines have trailing whitespace"
-  grep -r '[[:blank:]]$' --exclude-dir=".terraform" --exclude="*.png" --exclude-dir=".git" .
+  grep -r '[[:blank:]]$' --exclude-dir=".terraform" --exclude="*.png" --exclude-dir=".git" --exclude="*.pyc" .
   rc=$?
   if [ $rc = 0 ]; then
     exit 1

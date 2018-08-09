@@ -85,15 +85,15 @@ those clusters.
 
 |Gateway name|Google IP address|Network|Region|Tunnels
 |---|---|---|---|---|
-vpn1-deployment-gateway|x.x.x.x|network1|us-west1|vpn1-deployment-tunnel
-vpn2-deployment-gateway|x.x.x.x|network1|us-east1|vpn2-deployment-tunnel	 
+|vpn1-deployment-gateway|x.x.x.x|network1|us-west1|vpn1-deployment-tunnel|
+|vpn2-deployment-gateway|x.x.x.x|network1|us-east1|vpn2-deployment-tunnel|
 
 1. VPN Tunnels
 
 |Tunnel name|Status|Google gateway|Google IP address|Google network|Region|Peer IP address|Routing type
 |---|---|---|---|---|---|---|---|
-vpn1-deployment-tunnel|Established|vpn1-deployment-gateway|x.x.x.x|network1|us-west1|vpn3-static-ip|Route-based
-vpn2-deployment-tunnel|Established|vpn2-deployment-gateway|x.x.x.x|network1|us-east1|vpn4-static-ip|Route-based
+|vpn1-deployment-tunnel|Established|vpn1-deployment-gateway|x.x.x.x|network1|us-west1|vpn3-static-ip|Route-based|
+|vpn2-deployment-tunnel|Established|vpn2-deployment-gateway|x.x.x.x|network1|us-east1|vpn4-static-ip|Route-based|
 
 ### GCP Project 2
 #### Kubernetes Engine Cluster 3
@@ -103,7 +103,7 @@ vpn2-deployment-tunnel|Established|vpn2-deployment-gateway|x.x.x.x|network1|us-e
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
 |---|---|---|---|---|
-|10.128.0.0/19|10.228.0.0/20|us-west1-c|3|COS
+|10.128.0.0/19|10.228.0.0/20|us-west1-c|3|COS|
 
 #### Kubernetes Engine Cluster 4
 1. Network: network2
@@ -111,24 +111,24 @@ vpn2-deployment-tunnel|Established|vpn2-deployment-gateway|x.x.x.x|network1|us-e
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
 |---|---|---|---|---|
-|10.138.0.0/19|10.238.0.0/20|us-east1-c|3|COS
+|10.138.0.0/19|10.238.0.0/20|us-east1-c|3|COS|
 
 #### Other Resources
 1. Cluster IP, Nodeport, ILB, LB and Ingress services to expose pods in each of
 those clusters.
 1. VPN gateways
 
-Gateway name|Google IP address|Network|Region|Tunnels
+|Gateway name|Google IP address|Network|Region|Tunnels|
 |---|---|---|---|---|
-vpn3-deployment-gateway|x.x.x.x|network2|us-west1|vpn3-deployment-tunnel
-vpn4-deployment-gateway|x.x.x.x|network2|us-east1|vpn4-deployment-tunnel
+|vpn3-deployment-gateway|x.x.x.x|network2|us-west1|vpn3-deployment-tunnel|
+|vpn4-deployment-gateway|x.x.x.x|network2|us-east1|vpn4-deployment-tunnel|
 
 1. VPN Tunnels
 
-Tunnel name|Status|Google gateway|Google IP address|Google network|Region|Peer IP address|Routing type
+|Tunnel name|Status|Google gateway|Google IP address|Google network|Region|Peer IP address|Routing type|
 |---|---|---|---|---|---|---|---|
-vpn3-deployment-tunnel|Established|vpn3-deployment-gateway|x.x.x.x|network2|us-west1|vpn1-static-ip|Route-based
-vpn4-deployment-tunnel|Established|vpn4-deployment-gateway|x.x.x.x|network2|us-east1|vpn2-static-ip|Route-based
+|vpn3-deployment-tunnel|Established|vpn3-deployment-gateway|x.x.x.x|network2|us-west1|vpn1-static-ip|Route-based|
+|vpn4-deployment-tunnel|Established|vpn4-deployment-gateway|x.x.x.x|network2|us-east1|vpn2-static-ip|Route-based|
 
 ### Notes
 1. Region for subnets and Node CIDR can be customized in yaml files at /network/*.yaml files.
@@ -213,10 +213,9 @@ will be displayed in the "my-nginx-lb" row:
 ## Tear Down
 
 1. Change directory to `gke-to-gke-vpn`
-2. Run `./cleanup.sh $PROJECT1 $PROJECT2`
-3. Enter 'y' when prompted to delete the resources.
-4. Verify that the script executed with no errors.
-5. Verify that all the resources created in GCP projects 1 & 2 are deleted.
+1. Run `./cleanup.sh $PROJECT1 $PROJECT2`
+1. Verify that the script executed with no errors.
+1. Verify that all the resources created in GCP projects 1 & 2 are deleted.
 
 
 ## Troubleshooting

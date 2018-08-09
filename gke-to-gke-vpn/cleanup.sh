@@ -25,89 +25,89 @@ command -v gcloud >/dev/null 2>&1 || \
 command -v kubectl >/dev/null 2>&1 || \
 	{ echo >&2 "I require kubectl but it's not installed. Aborting."; exit 1; }
 
-( gcloud projects describe $1 | grep projectNumber >/dev/null 2>&1 ) || \
+( gcloud projects describe "$1" | grep projectNumber >/dev/null 2>&1 ) || \
 	{  echo "Project 1 is not valid. Aborting."; exit 1; }
 
-( gcloud projects describe $2 | grep projectNumber >/dev/null 2>&1 ) || \
+( gcloud projects describe "$2" | grep projectNumber >/dev/null 2>&1 ) || \
 	{ echo "Project 2 is not valid. Aborting."; exit 1; }
 
 ### Delete cluster1 services
 gcloud container clusters get-credentials cluster1-deployment-cluster1 \
-	--project $1 --zone us-west1-b
-kubectl delete -f $ROOT/manifests/ingress-svc.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/lb-svc.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/ilb-svc.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/nodeport-svc.yaml
-kubectl delete -f $ROOT/manifests/cluster-ip-svc.yaml
-kubectl delete -f $ROOT/manifests/run-my-nginx.yaml
+	--project "$1" --zone us-west1-b
+kubectl delete -f "$ROOT"/manifests/ingress-svc.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/lb-svc.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/ilb-svc.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/nodeport-svc.yaml
+kubectl delete -f "$ROOT"/manifests/cluster-ip-svc.yaml
+kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 
 ### Delete cluster2 services
 gcloud container clusters get-credentials cluster2-deployment-cluster2 \
-	--project $1 --zone us-east1-b
-kubectl delete -f $ROOT/manifests/ingress-svc1.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/lb-svc1.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/ilb-svc1.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/nodeport-svc1.yaml
-kubectl delete -f $ROOT/manifests/cluster-ip-svc1.yaml
-kubectl delete -f $ROOT/manifests/run-my-nginx.yaml
+	--project "$1" --zone us-east1-b
+kubectl delete -f "$ROOT"/manifests/ingress-svc1.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/lb-svc1.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/ilb-svc1.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/nodeport-svc1.yaml
+kubectl delete -f "$ROOT"/manifests/cluster-ip-svc1.yaml
+kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 
 ### Delete cluster3 services
 gcloud container clusters get-credentials cluster3-deployment-cluster3 \
-	--project $2 --zone us-west1-c
-kubectl delete -f $ROOT/manifests/ingress-svc.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/lb-svc.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/ilb-svc.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/nodeport-svc.yaml
-kubectl delete -f $ROOT/manifests/cluster-ip-svc.yaml
-kubectl delete -f $ROOT/manifests/run-my-nginx.yaml
+	--project "$2" --zone us-west1-c
+kubectl delete -f "$ROOT"/manifests/ingress-svc.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/lb-svc.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/ilb-svc.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/nodeport-svc.yaml
+kubectl delete -f "$ROOT"/manifests/cluster-ip-svc.yaml
+kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 
 ### Delete cluster4 services
 gcloud container clusters get-credentials cluster4-deployment-cluster4 \
-	--project $2 --zone us-east1-c
-kubectl delete -f $ROOT/manifests/ingress-svc1.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/lb-svc1.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/ilb-svc1.yaml --cascade --grace-period 10
-kubectl delete -f $ROOT/manifests/nodeport-svc1.yaml
-kubectl delete -f $ROOT/manifests/cluster-ip-svc1.yaml
-kubectl delete -f $ROOT/manifests/run-my-nginx.yaml
+	--project "$2" --zone us-east1-c
+kubectl delete -f "$ROOT"/manifests/ingress-svc1.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/lb-svc1.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/ilb-svc1.yaml --cascade --grace-period 10
+kubectl delete -f "$ROOT"/manifests/nodeport-svc1.yaml
+kubectl delete -f "$ROOT"/manifests/cluster-ip-svc1.yaml
+kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 
 ### wait for all service related backends to get deleted.
 ### Otherwise, deletion of network deployments fails with dependent resources.
 sleep 120
 
 ### Delete clusters
-gcloud deployment-manager deployments delete cluster1-deployment --project $1 \
+gcloud deployment-manager deployments delete cluster1-deployment --project "$1" \
   --quiet
-gcloud deployment-manager deployments delete cluster2-deployment --project $1 \
+gcloud deployment-manager deployments delete cluster2-deployment --project "$1" \
   --quiet
-gcloud deployment-manager deployments delete cluster3-deployment --project $2 \
+gcloud deployment-manager deployments delete cluster3-deployment --project "$2" \
   --quiet
-gcloud deployment-manager deployments delete cluster4-deployment --project $2 \
+gcloud deployment-manager deployments delete cluster4-deployment --project "$2" \
   --quiet
 
 ### Delete VPN connections
-gcloud deployment-manager deployments delete vpn1-deployment --project $1 \
+gcloud deployment-manager deployments delete vpn1-deployment --project "$1" \
   --quiet
-gcloud deployment-manager deployments delete vpn2-deployment --project $1 \
+gcloud deployment-manager deployments delete vpn2-deployment --project "$1" \
   --quiet
-gcloud deployment-manager deployments delete vpn3-deployment --project $2 \
+gcloud deployment-manager deployments delete vpn3-deployment --project "$2" \
   --quiet
-gcloud deployment-manager deployments delete vpn4-deployment --project $2 \
+gcloud deployment-manager deployments delete vpn4-deployment --project "$2" \
   --quiet
 
 ### Delete static ips
 gcloud deployment-manager deployments delete static-ip-deployment1 --project \
-  $1 --quiet
+  "$1" --quiet
 gcloud deployment-manager deployments delete static-ip-deployment2 --project \
-  $1 --quiet
+  "$1" --quiet
 gcloud deployment-manager deployments delete static-ip-deployment1 --project \
-  $2 --quiet
+  "$2" --quiet
 gcloud deployment-manager deployments delete static-ip-deployment2 --project \
-  $2 --quiet
+  "$2" --quiet
 
 
 ### Delete network
-gcloud deployment-manager deployments delete network1-deployment --project $1 \
+gcloud deployment-manager deployments delete network1-deployment --project "$1" \
   --quiet
-gcloud deployment-manager deployments delete network2-deployment --project $2 \
+gcloud deployment-manager deployments delete network2-deployment --project "$2" \
   --quiet
