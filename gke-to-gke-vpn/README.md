@@ -4,11 +4,11 @@
 <!--ts-->
 * [Introduction](#introduction)
 * [Architecture](#architecture)
-   * [GCP Project 1](#gcp-project-1)
+   * [GCP Network network1](#gcp-network-network1)
       * [Kubernetes Engine Cluster 1](#gke-cluster-1)
       * [Kubernetes Engine Cluster 2](#gke-cluster-2)
       * [Other Resources](#other-resources)
-   * [GCP Project 2](#gcp-project-2)
+   * [GCP Network network2](#gcp-network-network2)
       * [Kubernetes Engine Cluster 3](#gke-cluster-3)
       * [Kubernetes Engine Cluster 4](#gke-cluster-4)
       * [Other Resources](#other-resources-1)
@@ -61,9 +61,8 @@ In this project, we are using route-based VPN over policy-based VPN to establish
 
 Below is the detailed overview of GCP resources which will be created.
 
-### GCP Project 1
+### GCP Network network1
 #### Kubernetes Engine Cluster 1
-1. Network: network1
 1. Subnet: subnet1-us-west1 (10.1.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
@@ -71,7 +70,6 @@ Below is the detailed overview of GCP resources which will be created.
 |10.108.0.0/19|10.208.0.0/20|us-west1-b|3|COS
 
 #### Kubernetes Engine Cluster 2
-1. Network: network1
 1. Subnet: subnet1-us-east1 (10.2.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
@@ -95,10 +93,9 @@ those clusters.
 |vpn1-deployment-tunnel|Established|vpn1-deployment-gateway|x.x.x.x|network1|us-west1|vpn3-static-ip|Route-based|
 |vpn2-deployment-tunnel|Established|vpn2-deployment-gateway|x.x.x.x|network1|us-east1|vpn4-static-ip|Route-based|
 
-### GCP Project 2
+### GCP Network network2
 #### Kubernetes Engine Cluster 3
 
-1. Network: network2
 1. Subnet: subnet3-us-west1 (10.11.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
@@ -106,7 +103,6 @@ those clusters.
 |10.128.0.0/19|10.228.0.0/20|us-west1-c|3|COS|
 
 #### Kubernetes Engine Cluster 4
-1. Network: network2
 1. Subnet: subnet4-us-east1 (10.12.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
@@ -148,17 +144,11 @@ those clusters.
 1. Kubernetes Engine >= 1.10.0-gke.0
 
 ### Setup
-1. Pick unique names for PROJECT1 and PROJECT2 and set the variables.
-	```
-	export PROJECT1=<PROJECT1_ID>
-	export PROJECT2=<PROJECT2_ID>
-	```
-1. Create two GCP projects using GCP console or gcloud. Replace the ORG_ID with the value obtained from the above step.
-	```
-	gcloud projects create $PROJECT1
-	gcloud projects create $PROJECT2
-	```
-1. Enable billing for PROJECT1 and PROJECT2. Refer to https://cloud.google.com/billing/docs/how-to/modify-project
+1. Increase quotas from below resources. Refer to https://cloud.google.com/compute/quotas.
+    * Forwarding rules (minimun 24)
+    * In-use IP addresses global (minimun 20)
+    * Backend services (minimun 10)
+    * Firewall rules (minimun 42)
 1. Pull the code from git repo.
 1. Optionally, customize the configuration in .yaml files under /network/ or /clusters/ or /manifests/, if needed.
 
@@ -173,11 +163,11 @@ those clusters.
 The following steps will allow a user to run this demo.
 
 1. Change directory to `gke-to-gke-vpn`
-1. Run `./install.sh $PROJECT1 $PROJECT2`
+1. Run `./install.sh`
 
 ## Validation
 1. Make sure that there are no errors in the install script execution.
-1. Login to GCP console and select PROJECT1.
+1. Login to GCP console.
 1. Use the navigation menu, accessible at the top-left of the console, to select services in the following steps.
 ![Navigation Menu](../images/nav_menu_demo.png)
 1. Select "VPC networks" and confirm that CIDR ranges of subnet1-us-west1 is 10.1.0.0/28 and subnet2-us-east1 is 10.2.0.0/28
@@ -199,7 +189,6 @@ the specification.
 will be displayed in the "my-nginx-lb" row:
 ![Nginx External IP](../images/nginx_external_ip.png)
 ![Nginx Default Page](../images/nginx.png)
-1. Follow the steps 3 - 9 to verify resources in GCP PROJECT2.
 
 ## Verify the pod-to-service communication
 1. Clusters in the same region communicate through the internal load balancer.
@@ -207,27 +196,26 @@ will be displayed in the "my-nginx-lb" row:
 1. All the services created to expose pods in a cluster are accessible to pods within that cluster.
 1. Refer to validate-pod-to-service-communication.sh script to view the commands to verify pod to service communication.
 1. Change directory to `gke-to-gke-vpn`
-1. Run `./validate-pod-to-service-communication.sh $PROJECT1 $PROJECT2`
+1. Run `./validate-pod-to-service-communication.sh`
 1. The above script demonstrates how the pods in cluster1 can access the local Kubernetes Engine services and the other Kubernetes Engine Internal/External load balancer services from the same or different regions.
 
 ## Tear Down
 
 1. Change directory to `gke-to-gke-vpn`
-1. Run `./cleanup.sh $PROJECT1 $PROJECT2`
+1. Run `./cleanup.sh`
 1. Verify that the script executed with no errors.
-1. Verify that all the resources created in GCP projects 1 & 2 are deleted.
+1. Verify that all the resources created are deleted.
 
 
 ## Troubleshooting
 
-1. Make sure to set right values for command line arguments for PROJECT1 & PROJECT2 while executing install and cleanup scripts.
-1. Remember to enable API's as mentioned in deployment steps in both projects where the resources are to be created. Otherwise, API not enabled error is thrown.
-1. Make sure to have the right permissions for the GCP account to create above GCP/Kubernetes Engine resources in project1 & project2. Otherwise, permission denied error is thrown.
+1. Remember to enable API's as mentioned in deployment steps where the resources are to be created. Otherwise, API not enabled error is thrown.
+1. Make sure to have the right permissions for the GCP account to create above GCP/Kubernetes Engine resources. Otherwise, permission denied error is thrown.
 1. Make sure that the deployments created through install script are deleted before you try to re-install the resources. Otherwise, resources will not be installed properly.
 1. If there are any errors in cleanup script execution, refer to steps for deleting resources manually.
 
 ## Deleting Resources Manually
-1. Select PROJECT1 in GCP cloud console.
+1. Select the project in GCP cloud console.
 1. Goto Kubernetes Engine -> services. Delete all the services created through install script.
 1. Goto Network Services -> Load Balancing and delete the load balancers along with associated heathchecks.
 1. Goto Compute Engine -> VM Instances and delete all the instances created through install script.
@@ -235,7 +223,6 @@ will be displayed in the "my-nginx-lb" row:
 1. Goto VPC Networks -> Firewall Rules and delete the firewall rules created for network1.
 1. Goto Deployment Manager -> Deployments and delete vpn, static-ip, cluster and network deployments in the same order.
 1. Delete the dependent resources if network deployment doesn't get deleted.
-1. Repeat all of the above steps in PROJECT2.
 
 ## Relevant Materials
 
