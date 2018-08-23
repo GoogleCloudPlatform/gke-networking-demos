@@ -62,7 +62,7 @@ The execution of this code in the GCP environment creates two custom GCP network
 
 Below is the detailed overview of GCP resources which will be created.
 
-### GCP Network network1
+### GCP Network 1
 #### Kubernetes Engine Cluster 1
 1. Subnet: subnet1-us-west1 (10.1.0.0/28)
 
@@ -82,7 +82,7 @@ Below is the detailed overview of GCP resources which will be created.
 those clusters.
 1. VPC Peering connection with network2.
 
-### GCP Network network2
+### GCP Network 2
 #### Kubernetes Engine Cluster 3
 1. Subnet: subnet3-us-west1 (10.11.0.0/28)
 
@@ -111,6 +111,7 @@ those clusters.
 ## Prerequisites
 1. Install gcloud from https://cloud.google.com/sdk/downloads
 1. Install kubectl with  "gcloud components install kubectl"
+1. This demo creates resources on the default gcp project. Make sure the project is set. https://cloud.google.com/resource-manager/docs/creating-managing-projects
 
 ### Tools
 1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )

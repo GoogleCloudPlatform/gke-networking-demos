@@ -27,13 +27,16 @@ command -v gcloud >/dev/null 2>&1 || \
 command -v kubectl >/dev/null 2>&1 || \
   	{ echo >&2 "I require kubectl but it's not installed.  Aborting."; exit 1; }
 
+### Obtain current active PROJECT_ID
+PROJECT_ID=$(gcloud config get-value project)
+if [ -z "$PROJECT_ID" ]
+	then echo >&2 "I require default project is set but it's not.  Aborting."; exit 1;
+fi
+
 ### enable required service apis in each project
 gcloud services enable \
     compute.googleapis.com \
 	deploymentmanager.googleapis.com
-
-### Obtain current active PROJECT_ID
-PROJECT_ID=$(gcloud config get-value project)
 
 ### create networks and subnets
 gcloud deployment-manager deployments create network1-deployment \
