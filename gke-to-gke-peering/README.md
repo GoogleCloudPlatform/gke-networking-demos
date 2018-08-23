@@ -4,11 +4,11 @@
 <!--ts-->
 * [Introduction](#introduction)
 * [Architecture](#architecture)
-   * [GCP Project 1](#gcp-project-1)
+   * [GCP Network1](#gcp-network-network1)
       * [Kubernetes Engine Cluster 1](#kubernetes-engine-cluster-1)
       * [Kubernetes Engine Cluster 2](#kubernetes-engine-cluster-2)
       * [Other Resources](#other-resources)
-   * [GCP Project 2](#gcp-project-2)
+   * [GCP Network2](#gcp-network-network2)
       * [Kubernetes Engine Cluster 3](#kubernetes-engine-cluster-3)
       * [Kubernetes Engine Cluster 4](#kubernetes-engine-cluster-4)
       * [Other Resources](#other-resources-1)
@@ -62,9 +62,8 @@ The execution of this code in the GCP environment creates two custom GCP network
 
 Below is the detailed overview of GCP resources which will be created.
 
-### GCP Project 1
+### GCP Network 1
 #### Kubernetes Engine Cluster 1
-1. Network: network1
 1. Subnet: subnet1-us-west1 (10.1.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
@@ -72,7 +71,6 @@ Below is the detailed overview of GCP resources which will be created.
 |10.108.0.0/19|10.208.0.0/20|us-west1-b|3|COS
 
 #### Kubernetes Engine Cluster 2
-1. Network: network1
 1. Subnet: subnet1-us-east1 (10.2.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
@@ -84,10 +82,8 @@ Below is the detailed overview of GCP resources which will be created.
 those clusters.
 1. VPC Peering connection with network2.
 
-### GCP Project 2
+### GCP Network 2
 #### Kubernetes Engine Cluster 3
-
-1. Network: network2
 1. Subnet: subnet3-us-west1 (10.11.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
@@ -95,7 +91,6 @@ those clusters.
 |10.128.0.0/19|10.228.0.0/20|us-west1-c|3|COS
 
 #### Kubernetes Engine Cluster 4
-1. Network: network2
 1. Subnet: subnet4-us-east1 (10.12.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
@@ -116,6 +111,7 @@ those clusters.
 ## Prerequisites
 1. Install gcloud from https://cloud.google.com/sdk/downloads
 1. Install kubectl with  "gcloud components install kubectl"
+1. This demo creates resources on the default gcp project. Make sure the project is set. https://cloud.google.com/resource-manager/docs/creating-managing-projects
 
 ### Tools
 1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )
@@ -126,33 +122,12 @@ those clusters.
 1. Kubernetes Engine >= 1.10.0-gke.0
 
 ### Setup
-1. Pick unique names for PROJECT1 and PROJECT2 and set the variables.
-	```
-	export PROJECT1=<PROJECT1_ID>
-	export PROJECT2=<PROJECT2_ID>
-	```
-1. Pick the organization id for your GCP organization.
-	```
-	gcloud organizations list
-	```
-1. Create two GCP projects using GCP console or gcloud. Replace the ORG_ID with the value obtained from the above step.
-	```
-	gcloud projects create $PROJECT1 --organization=<ORG_ID>
-	gcloud projects create $PROJECT2 --organization=<ORG_ID>
-	```
-1. Enable billing for PROJECT1 and PROJECT2. Refer to https://cloud.google.com/billing/docs/how-to/modify-project
-1. Enable Compute Engine API and Google Cloud Deployment Manager API in both
-projects.
-	```
- 	gcloud services enable compute.googleapis.com --project=$PROJECT1
-	gcloud services enable deploymentmanager.googleapis.com --project=$PROJECT1
+1. Increase quotas from below resources. Refer to https://cloud.google.com/compute/quotas.
+	* Forwarding rules (minimun 24)
+	* In-use IP addresses global (minimun 20)
+	* Backend services (minimun 10)
+	* Firewall rules (minimun 42)
 
-	gcloud services enable compute.googleapis.com --project=$PROJECT2
- 	gcloud services enable deploymentmanager.googleapis.com --project=$PROJECT2
- 	```
-1. Increase quotas from the default backend service resources in PROJECT1 and PROJECT2.
-You will need a minimum of six unused backend services in each project. Refer to
-https://cloud.google.com/compute/quotas.
 1. Pull the code from git repo.
 1. Optionally, customize the configuration in .yaml files under /network/ or /clusters/ or /manifests/, if needed.
 
@@ -168,11 +143,11 @@ https://cloud.google.com/compute/quotas.
 The following steps will allow a user to
 
 1. Change directory to `gke-to-gke-peering`
-1. Run `./install.sh $PROJECT1 $PROJECT2`
+1. Run `./install.sh`
 
 ## Validation
 1. Make sure that there are no errors in the install script execution.
-1. Login to GCP console and select PROJECT1.
+1. Login to GCP console.
 1. Verify that the CIDR ranges of subnet-us-west1 and subnet-us-east1 matches
 the specification.
 1. Click on the VM instances in the Compute Engine and verify that the node IP addresses
@@ -184,7 +159,7 @@ and verify that "Container address range" matches the specified cluster-ipv4-cid
 1. Verify that cluster IP address of all the services for a cluster are drawn
 from service-ipv4-cidr.
 1. Access the endpoint for URL for external load balancer to view the nginx pods.
-1. Follow the steps 4 - 10 to verify resources in GCP PROJECT2.
+
 
 ## Verify the pod-to-service communication
 1. Clusters in the same region communicate through the internal load balancer.
@@ -192,29 +167,27 @@ from service-ipv4-cidr.
 1. All the services created to expose pods in a cluster are accessible to pods within that cluster.
 1. Refer to validate-pod-to-service-communication.sh script to view the commands to verify pod to service communication.
 1. Change directory to `gke-to-gke-peering`
-1. Run `./validate-pod-to-service-communication.sh $PROJECT1 $PROJECT2`
+1. Run `./validate-pod-to-service-communication.sh`
 1. The above script demonstrates how the pods in cluster1 can access the local Kubernetes Engine services and the other Kubernetes Engine Internal/External load balancer services from the same or different regions.
 
 ## Tear Down
 
 1. Change directory to `gke-to-gke-peering`
-2. Run `./cleanup.sh $PROJECT1 $PROJECT2`
+2. Run `./cleanup.sh`
 3. Enter 'y' when prompted to delete the resources.
 4. Verify that the script executed with no errors.
-5. Verify that all the resources created in GCP PROJECT1 & PROJECT2 are deleted.
+5. Verify that all the resources created are deleted.
 
 
 ## Troubleshooting
 
-1. Make sure to set right values for command line arguments for PROJECT1 & PROJECT2 while executing install and cleanup scripts.
-1. Remember to enable API's as mentioned in deployment steps in both projects where the resources are to be created. Otherwise, API not enabled error is thrown.
-1. Verify that the projects are associated with a valid billing account.
-1. Make sure to have the right permissions for the GCP account to create above GCP/Kubernetes Engine resources in PROJECT1 & PROJECT2. Otherwise, permission denied error is thrown.
+1. Remember to enable API's as mentioned in deployment steps in the project where the resources are to be created. Otherwise, API not enabled error is thrown.
+1. Verify that the project is associated with a valid billing account.
+1. Make sure to have the right permissions for the GCP account to create above GCP/Kubernetes Engine resources in project. Otherwise, permission denied error is thrown.
 1. Make sure that the deployments created through install script are deleted before you try to re-install the resources. Otherwise, resources will not be installed properly.
 1. If there are any errors in cleanup script execution, refer to steps for deleting resources manually.
 
 ## Deleting Resources Manually
-1. Select PROJECT1 in GCP cloud console.
 1. Goto Kubernetes Engine -> services. Delete all the services created through install script.
 1. Goto Network Services -> Load Balancing and delete the load balancers along with associated heathchecks.
 1. Goto Compute Engine -> VM Instances and delete all the instances created through install script.
@@ -222,7 +195,6 @@ from service-ipv4-cidr.
 1. Goto VPC Networks -> Firewall Rules and delete the firewall rules created for network1.
 1. Goto Deployment Manager -> Deployments and delete cluster and network deployments.
 1. Delete the dependent resources if network deployment doesn't get deleted.
-1. Repeat all of the above steps in PROJECT2.
 
 ## Relevant Materials
 
