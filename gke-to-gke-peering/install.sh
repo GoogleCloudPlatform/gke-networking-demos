@@ -38,27 +38,27 @@ fi
 ### enable required service apis in the project
 gcloud services enable \
     compute.googleapis.com \
-    deploymentmanager.googleapis.com 
+    deploymentmanager.googleapis.com
 
 ### create networks and subnets
 gcloud deployment-manager deployments create network1-deployment \
-  --config "$ROOT"/network/network1.yaml 
+  --config "$ROOT"/network/network1.yaml
 
 gcloud deployment-manager deployments create network2-deployment \
-  --config "$ROOT"/network/network2.yaml 
+  --config "$ROOT"/network/network2.yaml
 
 ### create clusters
 gcloud deployment-manager deployments create cluster1-deployment \
-  --config "$ROOT"/clusters/cluster1.yaml 
+  --config "$ROOT"/clusters/cluster1.yaml
 
 gcloud deployment-manager deployments create cluster2-deployment \
-  --config "$ROOT"/clusters/cluster2.yaml 
+  --config "$ROOT"/clusters/cluster2.yaml
 
 gcloud deployment-manager deployments create cluster3-deployment \
-  --config "$ROOT"/clusters/cluster3.yaml 
+  --config "$ROOT"/clusters/cluster3.yaml
 
 gcloud deployment-manager deployments create cluster4-deployment \
-  --config "$ROOT"/clusters/cluster4.yaml 
+  --config "$ROOT"/clusters/cluster4.yaml
 
 ### create VPC peering connections between network1 & network2
 gcloud compute networks peerings create peer-network1-to-network2 \
@@ -70,6 +70,7 @@ gcloud compute networks peerings create peer-network2-to-network1 \
 ### Fetch cluster1 credentials, deploy nginx pods in cluster1 and create services
 gcloud container clusters get-credentials cluster1-deployment-cluster1 \
   --zone us-west1-b
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
 kubectl create -f "$ROOT"/manifests/cluster-ip-svc.yaml
 kubectl create -f "$ROOT"/manifests/nodeport-svc.yaml
@@ -80,6 +81,7 @@ kubectl create -f "$ROOT"/manifests/ingress-svc.yaml
 ## Fetch cluster2 credentials, deploy nginx pods in cluster2 and create services
 gcloud container clusters get-credentials cluster2-deployment-cluster2 \
   --zone us-east1-b
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
 kubectl create -f "$ROOT"/manifests/cluster-ip-svc1.yaml
 kubectl create -f "$ROOT"/manifests/nodeport-svc1.yaml
@@ -90,6 +92,7 @@ kubectl create -f "$ROOT"/manifests/ingress-svc1.yaml
 ## Fetch cluster3 credentials, deploy nginx pods in cluster3 and create services
 gcloud container clusters get-credentials cluster3-deployment-cluster3 \
   --zone us-west1-c
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
 kubectl create -f "$ROOT"/manifests/cluster-ip-svc.yaml
 kubectl create -f "$ROOT"/manifests/nodeport-svc.yaml
@@ -100,6 +103,7 @@ kubectl create -f "$ROOT"/manifests/ingress-svc.yaml
 ## Fetch cluster4 credentials, deploy nginx pods in cluster4 and create services
 gcloud container clusters get-credentials cluster4-deployment-cluster4 \
   --zone us-east1-c
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
 kubectl create -f "$ROOT"/manifests/cluster-ip-svc1.yaml
 kubectl create -f "$ROOT"/manifests/nodeport-svc1.yaml

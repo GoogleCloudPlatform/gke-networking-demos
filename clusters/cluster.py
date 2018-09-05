@@ -20,6 +20,7 @@ https://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/exa
 for deployment manager samples.
 """
 
+
 def GenerateConfig(context):
     """
     Generates the YAML resource configuration for a GKE cluster.

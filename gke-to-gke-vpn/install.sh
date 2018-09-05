@@ -50,12 +50,12 @@ gcloud deployment-manager deployments create cluster1-deployment \
 	--config "$ROOT"/clusters/cluster1.yaml
 
 gcloud deployment-manager deployments create cluster2-deployment \
-	--config "$ROOT"/clusters/cluster2.yaml 
+	--config "$ROOT"/clusters/cluster2.yaml
 
 gcloud deployment-manager deployments create cluster3-deployment \
-	--config "$ROOT"/clusters/cluster3.yaml 
+	--config "$ROOT"/clusters/cluster3.yaml
 gcloud deployment-manager deployments create cluster4-deployment \
-	--config "$ROOT"/clusters/cluster4.yaml 
+	--config "$ROOT"/clusters/cluster4.yaml
 
 ### Create static ip for VPN connections
 gcloud deployment-manager deployments create static-ip-deployment1 \
@@ -118,6 +118,7 @@ serviceCIDR:10.218.0.0/20"
 ### services
 gcloud container clusters get-credentials cluster1-deployment-cluster1 \
 	--zone us-west1-b
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
 kubectl create -f "$ROOT"/manifests/cluster-ip-svc.yaml
 kubectl create -f "$ROOT"/manifests/nodeport-svc.yaml
@@ -130,6 +131,7 @@ kubectl create -f "$ROOT"/manifests/ingress-svc.yaml
 ### services
 gcloud container clusters get-credentials cluster2-deployment-cluster2 \
 	--zone us-east1-b
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
 kubectl create -f "$ROOT"/manifests/cluster-ip-svc1.yaml
 kubectl create -f "$ROOT"/manifests/nodeport-svc1.yaml
@@ -142,6 +144,7 @@ kubectl create -f "$ROOT"/manifests/ingress-svc1.yaml
 ### services
 gcloud container clusters get-credentials cluster3-deployment-cluster3 \
 	--zone us-west1-c
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
 kubectl create -f "$ROOT"/manifests/cluster-ip-svc.yaml
 kubectl create -f "$ROOT"/manifests/nodeport-svc.yaml
@@ -154,6 +157,7 @@ kubectl create -f "$ROOT"/manifests/ingress-svc.yaml
 ### services
 gcloud container clusters get-credentials cluster4-deployment-cluster4 \
 	--zone us-east1-c
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
 kubectl create -f "$ROOT"/manifests/cluster-ip-svc1.yaml
 kubectl create -f "$ROOT"/manifests/nodeport-svc1.yaml
