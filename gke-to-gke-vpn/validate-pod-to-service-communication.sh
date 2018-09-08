@@ -31,6 +31,7 @@ CLUSTER4_ZONE=$( gcloud container clusters list \
 
 ### use cluster1 context
 kubectl config use-context gke_"$PROJECT_ID"_"$CLUSTER1_ZONE"_cluster1-deployment-cluster1
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 
 POD_NAME=$( kubectl get pods -o wide | awk 'NR==2 {print $1}' )
 

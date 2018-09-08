@@ -33,7 +33,7 @@ metadata:
 spec:
   containers:
   - name: k8s-node
-    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:1.0.0
+    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:1.0.1
     imagePullPolicy: Always
     command:
     - cat
@@ -64,37 +64,129 @@ spec:
     }
   }
 
+  // Set the location of the service account credentials file.
+  // This file is created by a k8s secret volume
+  environment {
+    GOOGLE_APPLICATION_CREDENTIALS    = '/home/jenkins/dev/jenkins-deploy-dev-infra.json'
+  }
 
   stages {
-    stage('Setup access') {
+
+    // Run all of the code linting tools. shellcheck, flake8, etc..
+    stage('Lint') {
       steps {
         container('k8s-node') {
+           sh "make lint"
+        }
+      }
+    }
+
+    stage('Setup') {
+      steps {
+       container('k8s-node') {
           script {
-                env.KEYFILE = "/home/jenkins/dev/jenkins-deploy-dev-infra.json"
+                // env.CLUSTER_ZONE will need to be updated to match the
+                // ZONE in the jenkins.propeties file
+                env.CLUSTER_ZONE = "${CLUSTER_ZONE}"
+                // env.PROJECT_ID will need to be updated to match your GCP
+                // development project id
+                env.PROJECT_ID = "${PROJECT_ID}"
+                env.REGION = "${REGION}"
+                env.KEYFILE = GOOGLE_APPLICATION_CREDENTIALS
             }
           // Setup gcloud service account access
           sh "gcloud auth activate-service-account --key-file=${env.KEYFILE}"
+          sh "gcloud config set compute/zone ${env.CLUSTER_ZONE}"
+          sh "gcloud config set core/project ${env.PROJECT_ID}"
+          sh "gcloud config set compute/region ${env.REGION}"
          }
         }
     }
 
-    stage('makeall') {
+   stage('gke-to-gke-peering-create') {
       steps {
         container('k8s-node') {
-          // Checkout code from repository
-          checkout scm
-
-          sh "make all"
+          // You can use dir to set the working directory
+          dir('gke-to-gke-peering') {
+            sh './install.sh'
+          }
         }
       }
     }
-  }
 
-  post {
-    always {
-      container('k8s-node') {
-        sh 'gcloud auth revoke'
+
+      stage('gke-to-gke-peering-validate') {
+        steps {
+          container('k8s-node') {
+            dir('gke-to-gke-peering') {
+              // Give the service resources time to get their external addresses
+              sleep 360
+              sh './validate-pod-to-service-communication.sh'
+            }
+          }
+        }
+      }
+
+      stage('gke-to-gke-peering-cleanup') {
+        steps {
+          container('k8s-node') {
+            dir('gke-to-gke-peering') {
+              /**
+              Cleaning up as part of the regular pipeline since these projects
+              have unusually high resource requirements and we don't want
+              to hit quota
+              **/
+              sh './cleanup.sh'
+            }
+          }
+        }
+      }
+
+      stage('gke-to-gke-vpn-create') {
+        steps {
+          container('k8s-node') {
+            dir('gke-to-gke-vpn') {
+              sh './install.sh'
+            }
+          }
+        }
+      }
+
+      stage('gke-to-gke-vpn-validate') {
+        steps {
+          container('k8s-node') {
+            dir('gke-to-gke-vpn') {
+              sleep 360
+              sh './validate-pod-to-service-communication.sh'
+            }
+          }
+        }
+      }
+
+      stage('gke-to-gke-vpn-cleanup') {
+        steps {
+          container('k8s-node') {
+            dir('gke-to-gke-vpn') {
+              sh './cleanup.sh'
+            }
+          }
+        }
+      }
+
+
+    }
+
+    // Do cleanup as a post action in case the pipeline hits an error
+    post {
+      failure {
+        container('k8s-node') {
+          dir('gke-to-gke-peering') {
+            sh './cleanup.sh'
+          }
+          dir('gke-to-gke-vpn') {
+            sh './cleanup.sh'
+          }
+        }
       }
     }
-  }
 }

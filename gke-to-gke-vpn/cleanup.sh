@@ -29,6 +29,7 @@ command -v kubectl >/dev/null 2>&1 || \
 ### Delete cluster1 services
 gcloud container clusters get-credentials cluster1-deployment-cluster1 \
 	--zone us-west1-b
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl delete -f "$ROOT"/manifests/ingress-svc.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/lb-svc.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/ilb-svc.yaml --cascade --grace-period 10
@@ -39,6 +40,7 @@ kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 ### Delete cluster2 services
 gcloud container clusters get-credentials cluster2-deployment-cluster2 \
 	--zone us-east1-b
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl delete -f "$ROOT"/manifests/ingress-svc1.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/lb-svc1.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/ilb-svc1.yaml --cascade --grace-period 10
@@ -49,6 +51,7 @@ kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 ### Delete cluster3 services
 gcloud container clusters get-credentials cluster3-deployment-cluster3 \
 	--zone us-west1-c
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl delete -f "$ROOT"/manifests/ingress-svc.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/lb-svc.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/ilb-svc.yaml --cascade --grace-period 10
@@ -59,6 +62,7 @@ kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 ### Delete cluster4 services
 gcloud container clusters get-credentials cluster4-deployment-cluster4 \
 	--zone us-east1-c
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl delete -f "$ROOT"/manifests/ingress-svc1.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/lb-svc1.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/ilb-svc1.yaml --cascade --grace-period 10

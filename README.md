@@ -11,7 +11,7 @@ IP ranges are immutable. Using the correct method to expose the applications
 in the cluster is important as every method was designed for a different
 set of use cases.
 
-The demos in the project, demonstrate the following best practices:
+The demos in the project demonstrate the following best practices:
 
 1. Connecting two GCP networks using VPC peering and Cloud VPN containing two Kubernetes Engine clusters each.
 1. Deploying the nginx pods.
@@ -24,7 +24,7 @@ The demos in the project, demonstrate the following best practices:
 
 ### Operating Systems
 
-OSX, Linux and using Google Cloud Console are supported.
+macOS, Linux and using Google Cloud Console are supported.
 
 ### Tools
 1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )
