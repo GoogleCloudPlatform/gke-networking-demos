@@ -64,12 +64,15 @@ spec:
     }
   }
 
+  // Set the location of the service account credentials file.
+  // This file is created by a k8s secret volume
   environment {
     GOOGLE_APPLICATION_CREDENTIALS    = '/home/jenkins/dev/jenkins-deploy-dev-infra.json'
   }
 
   stages {
 
+    // Run all of the code linting tools. shellcheck, flake8, etc..
     stage('Lint') {
       steps {
         container('k8s-node') {
@@ -103,6 +106,7 @@ spec:
    stage('gke-to-gke-peering-create') {
       steps {
         container('k8s-node') {
+          // You can use dir to set the working directory
           dir('gke-to-gke-peering') {
             sh './install.sh'
           }
@@ -115,6 +119,7 @@ spec:
         steps {
           container('k8s-node') {
             dir('gke-to-gke-peering') {
+              // Give the service resources time to get their external addresses
               sleep 360
               sh './validate-pod-to-service-communication.sh'
             }
@@ -126,6 +131,11 @@ spec:
         steps {
           container('k8s-node') {
             dir('gke-to-gke-peering') {
+              /**
+              Cleaning up as part of the regular pipeline since these projects
+              have unusually high resource requirements and we don't want
+              to hit quota
+              **/
               sh './cleanup.sh'
             }
           }
@@ -166,6 +176,7 @@ spec:
 
     }
 
+    // Do cleanup as a post action in case the pipeline hits an error
     post {
       failure {
         container('k8s-node') {
