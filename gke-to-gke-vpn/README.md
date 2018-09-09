@@ -14,6 +14,8 @@
       * [Other Resources](#other-resources-1)
    * [Notes](#notes)
 * [Prerequisites](#prerequisites)
+   * [Run Demo in a Google Cloud Shell](#run-demo-in-a-google-cloud-shell)
+   * [Supported Operating Systems](#supported-operating-systems)
    * [Tools](#tools)
    * [Versions](#versions)
    * [Setup](#setup)
@@ -132,11 +134,36 @@ those clusters.
 1. To add additional custom attributes to network or clusters, yaml files (*.yaml) and deployment manager scripts (*.py) at "/network/" or "/clusters/" need to be updated accordingly.
 
 ## Prerequisites
-1. Install gcloud from https://cloud.google.com/sdk/downloads
-1. Install kubectl with  "gcloud components install kubectl"
-1. This demo creates resources on the default gcp project. Make sure the project is set. https://cloud.google.com/resource-manager/docs/creating-managing-projects
+
+A Google Cloud account and project is required for this. The default quotas for project
+some resources will most likely need to be increased. The Setup section below covers
+increasing the quotas.
+
+Access to an existing Google Cloud project with the Kubernetes Engine service enabled
+If you do not have a Google Cloud account please signup for a free trial
+[here](https://cloud.google.com).
+
+### Run Demo in a Google Cloud Shell
+
+Click the button below to run the demo in a [Google Cloud Shell](https://cloud.google.com/shell/docs/).
+
+[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https%3A%2F%2Fgithub.com%2FGoogleCloudPlatform%2Fgke-networking-demos&page=editor&tutorial=gke-to-gke-vpn/README.md)
+
+All the tools for the demo are installed. When using Cloud Shell execute the following
+command in order to setup gcloud cli.
+
+```console
+gcloud init
+```
+
+### Supported Operating Systems
+
+This project will run on macOS, or in a [Google Cloud Shell](https://cloud.google.com/shell/docs/).
 
 ### Tools
+
+When not using Cloud Shell, the following tools are required.
+
 1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )
 2. bash
 3. kubectl - ( >= v1.10.0-gke.0 )
