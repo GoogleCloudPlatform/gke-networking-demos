@@ -19,6 +19,9 @@ The demos in the project demonstrate the following best practices:
 1. Validating pod-to-service communication across the Kubernetes Engine clusters within the same region and the different regions.
 
 ## Prerequisites
+
+If you use Google Cloud Shell the prerequistite tools are installed.  Otherwise install:
+
 1. Install gcloud from https://cloud.google.com/sdk/downloads
 1. Install kubectl with  "gcloud components install kubectl"
 
