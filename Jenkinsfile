@@ -33,7 +33,7 @@ metadata:
 spec:
   containers:
   - name: k8s-node
-    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:1.0.1
+    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:1.1.0
     imagePullPolicy: Always
     command:
     - cat
