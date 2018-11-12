@@ -11,7 +11,7 @@ IP ranges are immutable. Using the correct method to expose the applications
 in the cluster is important as every method was designed for a different
 set of use cases.
 
-The demos in the project, demonstrate the following best practices:
+The demos in the project demonstrate the following best practices:
 
 1. Connecting two GCP networks using VPC peering and Cloud VPN containing two Kubernetes Engine clusters each.
 1. Deploying the nginx pods.
@@ -30,7 +30,6 @@ The Google Cloud SDK is used to interact with your GCP resources.
 [Installation instructions](https://cloud.google.com/sdk/downloads) for multiple platforms are available online.
 
 #### Install kubectl CLI
-
 The kubectl CLI is used to interteract with both Kubernetes Engine and kubernetes in general.
 [Installation instructions](https://cloud.google.com/kubernetes-engine/docs/quickstart)
 for multiple platforms are available online.

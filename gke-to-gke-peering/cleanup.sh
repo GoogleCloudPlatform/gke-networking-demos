@@ -19,22 +19,16 @@
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 ROOT="$(dirname "$dir")"
 
-
 command -v gcloud >/dev/null 2>&1 || \
   { echo >&2 "I require gcloud but it's not installed.  Aborting.";exit 1; }
 
 command -v kubectl >/dev/null 2>&1 || \
   { echo >&2 "I require kubectl but it's not installed.  Aborting."; exit 1; }
 
-( gcloud projects describe "$1" | grep projectNumber >/dev/null 2>&1 ) || \
-  {  echo "Project 1 is not valid. Aborting."; exit 1; }
-
-( gcloud projects describe "$2" | grep projectNumber >/dev/null 2>&1 ) || \
-  { echo "Project 2 is not valid. Aborting."; exit 1; }
-
 ### Delete cluster1 services
 gcloud container clusters get-credentials cluster1-deployment-cluster1 \
-  --project "$1" --zone us-west1-b
+  --zone us-west1-b
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl delete -f "$ROOT"/manifests/ingress-svc.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/lb-svc.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/ilb-svc.yaml --cascade --grace-period 10
@@ -44,7 +38,8 @@ kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 
 ### Delete cluster2 services
 gcloud container clusters get-credentials cluster2-deployment-cluster2 \
-  --project "$1" --zone us-east1-b
+  --zone us-east1-b
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl delete -f "$ROOT"/manifests/ingress-svc1.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/lb-svc1.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/ilb-svc1.yaml --cascade --grace-period 10
@@ -54,7 +49,8 @@ kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 
 ### Delete cluster3 services
 gcloud container clusters get-credentials cluster3-deployment-cluster3 \
-  --project "$2" --zone us-west1-c
+  --zone us-west1-c
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl delete -f "$ROOT"/manifests/ingress-svc.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/lb-svc.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/ilb-svc.yaml --cascade --grace-period 10
@@ -64,7 +60,8 @@ kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 
 ### Delete cluster4 services
 gcloud container clusters get-credentials cluster4-deployment-cluster4 \
-  --project "$2" --zone us-east1-c
+  --zone us-east1-c
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl delete -f "$ROOT"/manifests/ingress-svc1.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/lb-svc1.yaml --cascade --grace-period 10
 kubectl delete -f "$ROOT"/manifests/ilb-svc1.yaml --cascade --grace-period 10
@@ -77,23 +74,23 @@ kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
 sleep 120
 
 ### Delete clusters
-gcloud deployment-manager deployments delete cluster1-deployment --project "$1" \
+gcloud deployment-manager deployments delete cluster1-deployment \
   --quiet
-gcloud deployment-manager deployments delete cluster2-deployment --project "$1" \
+gcloud deployment-manager deployments delete cluster2-deployment \
   --quiet
-gcloud deployment-manager deployments delete cluster3-deployment --project "$2" \
+gcloud deployment-manager deployments delete cluster3-deployment \
   --quiet
-gcloud deployment-manager deployments delete cluster4-deployment --project "$2" \
+gcloud deployment-manager deployments delete cluster4-deployment \
   --quiet
 
 ### Delete VPC peering connections
 gcloud compute networks peerings delete peer-network1-to-network2  \
-  --network network1 --project "$1" --quiet
+  --network network1 --quiet
 gcloud compute networks peerings delete peer-network2-to-network1  \
-  --network network2 --project "$2" --quiet
+  --network network2 --quiet
 
 ### Delete network
-gcloud deployment-manager deployments delete network1-deployment --project "$1" \
+gcloud deployment-manager deployments delete network1-deployment \
   --quiet
-gcloud deployment-manager deployments delete network2-deployment --project "$2" \
+gcloud deployment-manager deployments delete network2-deployment \
   --quiet

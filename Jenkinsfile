@@ -1,3 +1,4 @@
+#!/usr/bin/env groovy
 /*
 Copyright 2018 Google LLC
 
@@ -19,12 +20,13 @@ limitations under the License.
 // define containerTemplate but that has been deprecated in favor of the yaml
 // format
 // Reference: https://github.com/jenkinsci/kubernetes-plugin
-pipeline {
-  agent {
-    kubernetes {
-      label 'k8s-infra'
-      defaultContainer 'jnlp'
-      yaml """
+
+// set up pod label and GOOGLE_APPLICATION_CREDENTIALS (for Terraform)
+def label = "k8s-infra"
+def containerName = "k8s-node"
+def GOOGLE_APPLICATION_CREDENTIALS    = '/home/jenkins/dev/jenkins-deploy-dev-infra.json'
+
+podTemplate(label: label, yaml: """
 apiVersion: v1
 kind: Pod
 metadata:
@@ -32,69 +34,120 @@ metadata:
     jenkins: build-node
 spec:
   containers:
-  - name: k8s-node
-    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:1.0.0
-    imagePullPolicy: Always
-    command:
-    - cat
+  - name: ${containerName}
+    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:${env.CONTAINER_VERSION}
+    command: ['cat']
     tty: true
     volumeMounts:
-    # Mount the docker.sock file so we can communicate wth the local docker
-    # daemon
-    - name: docker-sock-volume
-      mountPath: /var/run/docker.sock
-    # Mount the local docker binary
-    - name: docker-bin-volume
-      mountPath: /usr/bin/docker
     # Mount the dev service account key
     - name: dev-key
       mountPath: /home/jenkins/dev
   volumes:
-  - name: docker-sock-volume
-    hostPath:
-      path: /var/run/docker.sock
-  - name: docker-bin-volume
-    hostPath:
-      path: /usr/bin/docker
   # Create a volume that contains the dev json key that was saved as a secret
   - name: dev-key
     secret:
       secretName: jenkins-deploy-dev-infra
 """
-    }
-  }
+ ) {
+ node(label) {
+  try {
+    // Options covers all other job properties or wrapper functions that apply to entire Pipeline.
+    properties([disableConcurrentBuilds()])
+    // set env variable GOOGLE_APPLICATION_CREDENTIALS for Terraform
+    env.GOOGLE_APPLICATION_CREDENTIALS=GOOGLE_APPLICATION_CREDENTIALS
 
-
-  stages {
-    stage('Setup access') {
-      steps {
-        container('k8s-node') {
-          script {
-                env.KEYFILE = "/home/jenkins/dev/jenkins-deploy-dev-infra.json"
-            }
-          // Setup gcloud service account access
-          sh "gcloud auth activate-service-account --key-file=${env.KEYFILE}"
-         }
-        }
-    }
-
-    stage('makeall') {
-      steps {
-        container('k8s-node') {
-          // Checkout code from repository
+    stage('Setup') {
+        container(containerName) {
+          // checkout code from scm i.e. commits related to the PR
           checkout scm
 
-          sh "make all"
-        }
+          // Setup gcloud service account access
+          sh "gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}"
+          sh "gcloud config set compute/zone ${env.CLUSTER_ZONE}"
+          sh "gcloud config set core/project ${env.PROJECT_ID}"
+          sh "gcloud config set compute/region ${env.REGION}"
+         }
+    }
+    stage('Lint') {
+        container(containerName) {
+          sh "make lint"
       }
+    }
+
+    stage('gke-to-gke-peering-create') {
+       container(containerName) {
+          // You can use dir to set the working directory
+          dir('gke-to-gke-peering') {
+            sh './install.sh'
+          }
+        }
+    }
+    stage('gke-to-gke-peering-validate') {
+          container(containerName) {
+            dir('gke-to-gke-peering') {
+              // Give the service resources time to get their external addresses
+              sleep 360
+              sh './validate-pod-to-service-communication.sh'
+            }
+          }
+      }
+
+    stage('gke-to-gke-peering-cleanup') {
+          container(containerName) {
+            dir('gke-to-gke-peering') {
+              /**
+              Cleaning up as part of the regular pipeline since these projects
+              have unusually high resource requirements and we don't want
+              to hit quota
+              **/
+              sh './cleanup.sh'
+            }
+          }
+      }
+
+    stage('gke-to-gke-vpn-create') {
+          container(containerName) {
+            dir('gke-to-gke-vpn') {
+              sh './install.sh'
+            }
+          }
+      }
+
+    stage('gke-to-gke-vpn-validate') {
+          container(containerName) {
+            dir('gke-to-gke-vpn') {
+              sleep 360
+              sh './validate-pod-to-service-communication.sh'
+            }
+          }
+    }
+
+    stage('gke-to-gke-vpn-cleanup') {
+          container(containerName) {
+            dir('gke-to-gke-vpn') {
+              sh './cleanup.sh'
+            }
+          }
     }
   }
-
-  post {
-    always {
-      container('k8s-node') {
-        sh 'gcloud auth revoke'
+   catch (err) {
+      stage('Teardown') {
+        container(containerName) {
+          dir('gke-to-gke-peering') {
+            sh './cleanup.sh'
+          }
+          dir('gke-to-gke-vpn') {
+            sh './cleanup.sh'
+          }
+        }
       }
-    }
+      // if any exception occurs, mark the build as failed
+      // and display a detailed message on the Jenkins console output
+      currentBuild.result = 'FAILURE'
+      echo "FAILURE caught echo ${err}"
+      throw err
+   }
+   finally {
+   }
   }
 }

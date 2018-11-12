@@ -17,24 +17,21 @@
 ### Executes commands to verify pod-to-service communication from test container of the pods in cluster1
 ### cluster zones can be modified as needed.
 
-### Validate gcp projects
-( gcloud projects describe "$1" | grep projectNumber >/dev/null 2>&1 ) || \
-	{  echo "Project 1 is not valid. Aborting."; exit 1; }
+### Obtain current active PROJECT_ID
+PROJECT_ID=$(gcloud config get-value project)
 
-( gcloud projects describe "$2" | grep projectNumber >/dev/null 2>&1 ) || \
-	{ echo "Project 2 is not valid. Aborting."; exit 1; }
-
-CLUSTER1_ZONE=$( gcloud container clusters list --project "$1" \
+CLUSTER1_ZONE=$( gcloud container clusters list \
 	| grep "cluster1" | awk '{ print $2 }' )
-CLUSTER2_ZONE=$( gcloud container clusters list --project "$1" \
+CLUSTER2_ZONE=$( gcloud container clusters list \
 	| grep "cluster2" | awk '{ print $2 }' )
-CLUSTER3_ZONE=$( gcloud container clusters list --project "$2" \
+CLUSTER3_ZONE=$( gcloud container clusters list \
 	| grep "cluster3" | awk '{ print $2 }' )
-CLUSTER4_ZONE=$( gcloud container clusters list --project "$2" \
+CLUSTER4_ZONE=$( gcloud container clusters list \
 	| grep "cluster4" | awk '{ print $2 }' )
 
 ### use cluster1 context
-kubectl config use-context gke_"$1"_"$CLUSTER1_ZONE"_cluster1-deployment-cluster1
+kubectl config use-context gke_"$PROJECT_ID"_"$CLUSTER1_ZONE"_cluster1-deployment-cluster1
+kubectl config set-context "$(kubectl config current-context)" --namespace=default
 
 POD_NAME=$( kubectl get pods -o wide | awk 'NR==2 {print $1}' )
 
@@ -65,7 +62,7 @@ echo "----------------------------------------"
 echo "----------------------------------------"
 echo "Testing: cluster1 -> cluster3 ILB (same region)"
 SERVICE_IP=$( kubectl get services --cluster \
-	gke_"$2"_"$CLUSTER3_ZONE"_cluster3-deployment-cluster3 \
+	gke_"$PROJECT_ID"_"$CLUSTER3_ZONE"_cluster3-deployment-cluster3 \
 	| grep -w "my-nginx-ilb "| awk '{print $4}' )
 echo "kubectl exec $POD_NAME -c my-test -- curl -s -I $SERVICE_IP:8080"
 kubectl exec "$POD_NAME" -c my-test -- curl -s -I "$SERVICE_IP":8080
@@ -74,7 +71,7 @@ echo "----------------------------------------"
 echo "----------------------------------------"
 echo "Testing: cluster1 -> cluster4 ILB (cross region)"
 SERVICE_IP=$( kubectl get services --cluster \
-	gke_"$2"_"$CLUSTER4_ZONE"_cluster4-deployment-cluster4 \
+	gke_"$PROJECT_ID"_"$CLUSTER4_ZONE"_cluster4-deployment-cluster4 \
 	| grep -w "my-nginx-ilb-2 "| awk '{print $4}' )
 echo "kubectl exec $POD_NAME -c my-test -- curl -s -I $SERVICE_IP:8080"
 kubectl exec "$POD_NAME" -c my-test -- curl -s -I "$SERVICE_IP":8080
@@ -97,7 +94,7 @@ echo "----------------------------------------"
 echo "----------------------------------------"
 echo "Testing: cluster1 -> cluster2 (shared network, cross region)"
 SERVICE_IP=$( kubectl get services --cluster \
-	gke_"$1"_"$CLUSTER2_ZONE"_cluster2-deployment-cluster2 \
+	gke_"$PROJECT_ID"_"$CLUSTER2_ZONE"_cluster2-deployment-cluster2 \
 	| grep -w "my-nginx-lb-2 "| awk '{print $4}' )
 echo "kubectl exec $POD_NAME -c my-test -- curl -s -I $SERVICE_IP:8080"
 kubectl exec "$POD_NAME" -c my-test -- curl -s -I "$SERVICE_IP":8080
