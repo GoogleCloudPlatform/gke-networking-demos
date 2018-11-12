@@ -19,20 +19,21 @@ The demos in the project, demonstrate the following best practices:
 1. Validating pod-to-service communication across the Kubernetes Engine clusters within the same region and the different regions.
 
 ## Prerequisites
-1. Install gcloud from https://cloud.google.com/sdk/downloads
-1. Install kubectl with  "gcloud components install kubectl"
-
-### Operating Systems
-
-OSX, Linux and using Google Cloud Console are supported.
 
 ### Tools
-1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )
-2. bash
-3. kubectl - ( >= v1.10.0-gke.0 )
+1. [Google Cloud SDK version >= 204.0.0](https://cloud.google.com/sdk/docs/downloads-versioned-archives)
+2. [kubectl matching the latest GKE version](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+3. bash or bash compatible shell
 
-### Versions
-1. Kubernetes Engine >= 1.10.0-gke.0
+#### Install Cloud SDK
+The Google Cloud SDK is used to interact with your GCP resources.
+[Installation instructions](https://cloud.google.com/sdk/downloads) for multiple platforms are available online.
+
+#### Install kubectl CLI
+
+The kubectl CLI is used to interteract with both Kubernetes Engine and kubernetes in general.
+[Installation instructions](https://cloud.google.com/kubernetes-engine/docs/quickstart)
+for multiple platforms are available online.
 
 ## Directory Structure
 1. The [gke-to-gke-vpc-peering](gke-to-gke-vpc-peering) and [gke-to-gke-vpn](gke-to-gke-vpn) folders each contain a project.
