@@ -97,8 +97,8 @@ fi
 ### Delete VPN connections
 for (( c=1; c<=4; c++ ))
 do
-  if deployment_exists "${PROJECT_ID}" "vpn$1-deployment"; then
-    gcloud deployment-manager deployments delete vpn$1-deployment --quiet
+  if deployment_exists "${PROJECT_ID}" "vpn$c-deployment"; then
+    gcloud deployment-manager deployments delete "vpn$c-deployment" --quiet
   fi
 done
 
