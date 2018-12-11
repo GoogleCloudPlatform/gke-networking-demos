@@ -87,7 +87,7 @@ fi
 
 ### wait for all service related backends to get deleted.
 ### Otherwise, deletion of network deployments fails with dependent resources.
-#sleep 120
+sleep 120
 
 ### Delete clusters
 gcloud deployment-manager deployments delete cluster-deployment --quiet
