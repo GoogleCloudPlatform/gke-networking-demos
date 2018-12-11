@@ -85,10 +85,11 @@ spec:
     stage('gke-to-gke-peering-validate') {
           container(containerName) {
             dir('gke-to-gke-peering') {
-              // Give the service resources time to get their external addresses
-              sleep 360
-              sh './validate-pod-to-service-communication.sh'
+              sh './validate.sh'
             }
+            // Give the service resources time to get their external addresses
+            sleep 60
+            sh './validate-pod-to-service-communication.sh'
           }
       }
 
@@ -116,9 +117,10 @@ spec:
     stage('gke-to-gke-vpn-validate') {
           container(containerName) {
             dir('gke-to-gke-vpn') {
-              sleep 360
-              sh './validate-pod-to-service-communication.sh'
+              sh './validate.sh'
             }
+            sleep 360
+            sh './validate-pod-to-service-communication.sh'
           }
     }
 

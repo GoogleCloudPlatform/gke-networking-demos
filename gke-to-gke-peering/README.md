@@ -185,6 +185,8 @@ and verify that "Container address range" matches the specified cluster-ipv4-cid
 1. Verify that cluster IP address of all the services for a cluster are drawn
 from service-ipv4-cidr.
 1. Access the endpoint for URL for external load balancer to view the nginx pods.
+1. Change directory to `gke-to-gke-peering`
+1. Run `./validate.sh`
 
 
 ## Verify the pod-to-service communication
@@ -192,8 +194,7 @@ from service-ipv4-cidr.
 1. Clusters across the different regions communicate through the global load balancer.
 1. All the services created to expose pods in a cluster are accessible to pods within that cluster.
 1. Refer to validate-pod-to-service-communication.sh script to view the commands to verify pod to service communication.
-1. Change directory to `gke-to-gke-peering`
-1. Run `./validate-pod-to-service-communication.sh`
+1. Run `./validate-pod-to-service-communication.sh` located in the project root directory
 1. The above script demonstrates how the pods in cluster1 can access the local Kubernetes Engine services and the other Kubernetes Engine Internal/External load balancer services from the same or different regions.
 
 ## Tear Down
