@@ -107,6 +107,27 @@ function vpn_exists() {
   return 1
 }
 
+# Check if a given network peering exists
+# Globals:
+#   None
+# Arguments:
+#   PROJECT
+#   NETWORK
+# Returns:
+#   1
+function network_peering_exists() {
+  local PROJECT="${1}"
+  local NETWORK="${2}"
+  local EXISTS
+  EXISTS=$(gcloud compute networks peerings list --project "${PROJECT}" \
+    --filter="name=${NETWORK}" --format "value(name)")
+  if [[ "${EXISTS}" != "" ]]; then
+    echo "${NETWORK} peering exists"
+    return 0
+  fi
+  return 1
+}
+
 # Verify cidr range
 # Globals:
 #   None

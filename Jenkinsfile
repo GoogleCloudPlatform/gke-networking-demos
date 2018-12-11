@@ -151,6 +151,17 @@ spec:
       throw err
    }
    finally {
-   }
+     stage('Teardown') {
+        container(containerName) {
+          dir('gke-to-gke-peering') {
+            sh './cleanup.sh'
+          }
+          dir('gke-to-gke-vpn') {
+            sh './cleanup.sh'
+          }
+          sh "gcloud auth revoke"
+        }
+      }
+    }
   }
 }

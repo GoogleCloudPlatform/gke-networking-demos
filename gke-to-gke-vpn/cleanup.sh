@@ -87,19 +87,27 @@ fi
 
 ### wait for all service related backends to get deleted.
 ### Otherwise, deletion of network deployments fails with dependent resources.
-sleep 120
+#sleep 120
 
 ### Delete clusters
-gcloud deployment-manager deployments delete cluster-deployment --quiet
+if deployment_exists "${PROJECT_ID}" "cluster-deployment"; then
+  gcloud deployment-manager deployments delete cluster-deployment --quiet
+fi
 
 ### Delete VPN connections
-gcloud deployment-manager deployments delete vpn1-deployment --quiet
-gcloud deployment-manager deployments delete vpn2-deployment --quiet
-gcloud deployment-manager deployments delete vpn3-deployment --quiet
-gcloud deployment-manager deployments delete vpn4-deployment --quiet
+for (( c=1; c<=4; c++ ))
+do
+  if deployment_exists "${PROJECT_ID}" "vpn$1-deployment"; then
+    gcloud deployment-manager deployments delete vpn$1-deployment --quiet
+  fi
+done
 
 ### Delete static ips
-gcloud deployment-manager deployments delete static-ip-deployment --quiet
+if deployment_exists "${PROJECT_ID}" "static-ip-deployment"; then
+  gcloud deployment-manager deployments delete static-ip-deployment --quiet
+fi
 
 ### Delete network
-gcloud deployment-manager deployments delete network-deployment --quiet
+if deployment_exists "${PROJECT_ID}" "network-deployment"; then
+  gcloud deployment-manager deployments delete network-deployment --quiet
+fi
