@@ -199,8 +199,7 @@ function access_service () {
     if [ "${SERVICE_IP}" == "" ] ; then
       echo "Attempt $((i + 1)): IP not yet allocated for service ${SERVICE}" >&1
     else
-      echo "Attempt $((i + 1)): IP has been allocated for service ${SERVICE}" >&1
-      curl -s -I "${SERVICE_IP}":8080
+      echo "$SERVICE_IP has been allocated for service ${SERVICE} in ${CLUSTER}" >&1
       return 0
     fi
     sleep "${SLEEP}"

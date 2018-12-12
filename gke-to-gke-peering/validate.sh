@@ -84,7 +84,7 @@ do
   fi
 done
 
-### Access external nginx service ips for cluster1
+### Check external nginx service ips for cluster1
 if ! access_service "${PROJECT_ID}" \
   "gke_${PROJECT_ID}_${CLUSTER1_ZONE}_cluster-deployment-cluster1" "my-nginx-lb"; then
   echo "Service ip is not available"
@@ -92,7 +92,15 @@ if ! access_service "${PROJECT_ID}" \
   exit 1
 fi
 
-### Access external nginx service ips for cluster2
+### Check internal nginx service ips for cluster1
+if ! access_service "${PROJECT_ID}" \
+  "gke_${PROJECT_ID}_${CLUSTER1_ZONE}_cluster-deployment-cluster1" "my-nginx-ilb"; then
+  echo "Service ip is not available"
+  echo "Terminating..."
+  exit 1
+fi
+
+### Check external nginx service ips for cluster2
 if ! access_service "${PROJECT_ID}" \
   "gke_${PROJECT_ID}_${CLUSTER2_ZONE}_cluster-deployment-cluster2" "my-nginx-lb-2"; then
   echo "Service ip is not available"
@@ -100,7 +108,15 @@ if ! access_service "${PROJECT_ID}" \
   exit 1
 fi
 
-### Access external nginx service ips for cluster3
+### Check internal nginx service ips for cluster2
+if ! access_service "${PROJECT_ID}" \
+  "gke_${PROJECT_ID}_${CLUSTER2_ZONE}_cluster-deployment-cluster2" "my-nginx-ilb-2"; then
+  echo "Service ip is not available"
+  echo "Terminating..."
+  exit 1
+fi
+
+### Check external nginx service ips for cluster3
 if ! access_service "${PROJECT_ID}" \
   "gke_${PROJECT_ID}_${CLUSTER3_ZONE}_cluster-deployment-cluster3" "my-nginx-lb"; then
   echo "Service ip is not available"
@@ -108,9 +124,25 @@ if ! access_service "${PROJECT_ID}" \
   exit 1
 fi
 
-### Access external nginx service ips for cluster4
+### Check internal nginx service ips for cluster3
+if ! access_service "${PROJECT_ID}" \
+  "gke_${PROJECT_ID}_${CLUSTER3_ZONE}_cluster-deployment-cluster3" "my-nginx-ilb"; then
+  echo "Service ip is not available"
+  echo "Terminating..."
+  exit 1
+fi
+
+### Check external nginx service ips for cluster4
 if ! access_service "${PROJECT_ID}" \
   "gke_${PROJECT_ID}_${CLUSTER4_ZONE}_cluster-deployment-cluster4" "my-nginx-lb-2"; then
+  echo "Service ip is not available"
+  echo "Terminating..."
+  exit 1
+fi
+
+### Check internal nginx service ips for cluster4
+if ! access_service "${PROJECT_ID}" \
+  "gke_${PROJECT_ID}_${CLUSTER4_ZONE}_cluster-deployment-cluster4" "my-nginx-ilb-2"; then
   echo "Service ip is not available"
   echo "Terminating..."
   exit 1
