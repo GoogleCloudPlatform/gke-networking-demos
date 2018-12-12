@@ -24,7 +24,7 @@
 #   METRICS
 #   QUOTA
 # Returns:
-#   1
+#   status code
 function meets_quota() {
   local PROJECT="$1"
   local METRIC="$2"
@@ -48,7 +48,7 @@ function meets_quota() {
 #   PROJECT
 #   DEPLOY
 # Returns:
-#   1
+#   status code
 function deployment_exists() {
   local PROJECT="${1}"
   local DEPLOY="${2}"
@@ -72,7 +72,7 @@ function deployment_exists() {
 #   PROJECT
 #   NETWORK
 # Returns:
-#   1
+#   status code
 function network_exists() {
   local PROJECT="${1}"
   local NETWORK="${2}"
@@ -93,7 +93,7 @@ function network_exists() {
 #   PROJECT
 #   VPN
 # Returns:
-#   1
+#   status code
 function vpn_exists() {
   local PROJECT="${1}"
   local VPN="${2}"
@@ -114,7 +114,7 @@ function vpn_exists() {
 #   PROJECT
 #   NETWORK
 # Returns:
-#   1
+#   status code
 function network_peering_exists() {
   local PROJECT="${1}"
   local NETWORK="${2}"
@@ -136,7 +136,7 @@ function network_peering_exists() {
 #   SUBNET
 #   RANGE
 # Returns:
-#   1
+#   status code
 function verify_cidr_range() {
   local PROJECT="${1}"
   local SUBNET="${2}"
@@ -158,7 +158,7 @@ function verify_cidr_range() {
 #   PROJECT
 #   CLUSTER
 # Returns:
-#   None
+#   status code
 function cluster_running() {
   local PROJECT="${1}"
   local CLUSTER="${2}"
@@ -172,27 +172,71 @@ function cluster_running() {
   return 1
 }
 
-
 # Check if service ip is available
 # Globals:
 #   None
 # Arguments:
 #   PROJECT
 #   CLUSTER
-#   NAME
+#   SERVICE
+#   RETRY_COUNT  - Number of times to retry
+#   INTERVAL     - Amount of time to sleep between retries
+#   NAMESPACE    - k8s namespace the service lives in
 # Returns:
-#   None
-function access_service() {
+#   status code
+function access_service () {
   local PROJECT="${1}"
   local CLUSTER="${2}"
-  local NAME="${3}"
+  local SERVICE="${3}"
+  local RETRY_COUNT="15"
+  local SLEEP="15"
+  local NAMESPACE="default"
   local SERVICE_IP
-  SERVICE_IP=$( kubectl get services --cluster "${CLUSTER}" | grep -w "${NAME}" \
-    | awk '{print $4}' )
-  echo "Checking ${NAME} service ip for ${CLUSTER}"
-  if [ ! -z "${SERVICE_IP}" ]; then
-    echo "curl -s -I ${SERVICE_IP}:8080"
-  fi
-  curl -s -I "${SERVICE_IP}":8080
-  return $?
+
+  for ((i=0; i<"${RETRY_COUNT}"; i++)); do
+    SERVICE_IP=$(kubectl get -n "${NAMESPACE}" --cluster "${CLUSTER}" \
+      service "${SERVICE}" -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    if [ "${SERVICE_IP}" == "" ] ; then
+      echo "Attempt $((i + 1)): IP not yet allocated for service ${SERVICE}" >&1
+    else
+      echo "Attempt $((i + 1)): IP has been allocated for service ${SERVICE}" >&1
+      curl -s -I "${SERVICE_IP}":8080
+      return 0
+    fi
+    sleep "${SLEEP}"
+  done
+  echo "Timed out waiting for service ${SERVICE} to be allocated an IP address." >&1
+  return 1
+}
+
+# Check if service backends exist
+# Globals:
+#   None
+# Arguments:
+#   PROJECT
+#   NAME
+#   RETRY_COUNT  - Number of times to retry
+#   INTERVAL     - Amount of time to sleep between retries
+#   NAMESPACE    - k8s namespace the service lives in
+# Returns:
+#   status code
+function backends_exists () {
+  local PROJECT="${1}"
+  local NAME="${2}"
+  local RETRY_COUNT="12"
+  local SLEEP="10"
+  local BACKEND
+
+  for ((i=0; i<"${RETRY_COUNT}"; i++)); do
+    BACKEND=$(gcloud compute backend-services list --project "$PROJECT" \
+      --format "value(backends.group)" | grep "${NAME}")
+    if [ "${BACKEND}" == "" ] ; then
+      return 0
+    else
+      echo "Attempt $((i + 1)): Checking if service backends are removed" >&1
+    fi
+    sleep "${SLEEP}"
+  done
+  echo "Timed out waiting for service backends to be removed." >&1
+  return 1
 }

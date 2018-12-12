@@ -87,7 +87,9 @@ fi
 
 ### wait for all service related backends to get deleted.
 ### Otherwise, deletion of network deployments fails with dependent resources.
-sleep 120
+if backends_exists "${PROJECT_ID}" "k8s-ig"; then
+  echo "Service related backends have been removed"
+fi
 
 ### Delete clusters
 if deployment_exists "${PROJECT_ID}" "cluster-deployment"; then

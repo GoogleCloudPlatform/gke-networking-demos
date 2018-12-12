@@ -84,7 +84,6 @@ spec:
     }
     stage('gke-to-gke-peering-validate') {
           // Give the service resources time to get their external addresses
-          sleep 120
           container(containerName) {
             dir('gke-to-gke-peering') {
               sh './validate.sh'
@@ -116,7 +115,6 @@ spec:
       }
 
     stage('gke-to-gke-vpn-validate') {
-          sleep 120
           container(containerName) {
             dir('gke-to-gke-vpn') {
               sh './validate.sh'
