@@ -217,14 +217,15 @@ the specification.
 will be displayed in the "my-nginx-lb" row:
 ![Nginx External IP](../images/nginx_external_ip.png)
 ![Nginx Default Page](../images/nginx.png)
+1. Change directory to `gke-to-gke-vpn`
+1. Run `./validate.sh`
 
 ## Verify the pod-to-service communication
 1. Clusters in the same region communicate through the internal load balancer.
 1. Clusters across the different regions communicate through the global load balancer, unless they are peered via VPN. When peered via VPN, clusters can still communicate via internal load balancers.
 1. All the services created to expose pods in a cluster are accessible to pods within that cluster.
 1. Refer to validate-pod-to-service-communication.sh script to view the commands to verify pod to service communication.
-1. Change directory to `gke-to-gke-vpn`
-1. Run `./validate-pod-to-service-communication.sh`
+1. Run `./validate-pod-to-service-communication.sh` located in the project root directory
 1. The above script demonstrates how the pods in cluster1 can access the local Kubernetes Engine services and the other Kubernetes Engine Internal/External load balancer services from the same or different regions.
 
 ## Tear Down

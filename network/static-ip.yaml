@@ -11,22 +11,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-### cluster4 configuration
 
-imports:
-- path: cluster.py
+# Template for creating static ip
+# Refer to
+# https://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/vpn_auto_subnet
+# Input values are provided using --properties flag
 
 resources:
-- name: cluster4
-  type: cluster.py
+
+## STATIC IP
+- type: compute.v1.address
+  name: vpn1-ip-address
   properties:
-    network: network2
-    subnet: subnet4-us-east1
-    zone: us-east1-c
-    cluster-version: "1.10"
-    initialNodeCount: 3
-    image-type: cos
-    tags: kc-node
-    enable-ip-alias: true
-    cluster-ipv4-cidr: 10.138.0.0/19
-    services-ipv4-cidr: 10.238.0.0/20
+    region: us-west1
+
+- type: compute.v1.address
+  name: vpn2-ip-address
+  properties:
+    region: us-east1
+
+- type: compute.v1.address
+  name: vpn3-ip-address
+  properties:
+    region: us-west1
+
+- type: compute.v1.address
+  name: vpn4-ip-address
+  properties:
+    region: us-east1
