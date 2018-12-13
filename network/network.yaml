@@ -12,22 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-### cluster3 configuration
+### Network1 configuration
 
 imports:
-- path: cluster.py
+- path: network.py
 
 resources:
-- name: cluster3
-  type: cluster.py
+# The "name" property below will be the name of the new network
+- name: network1
+  type: network.py
   properties:
-    network: network2
-    subnet: subnet3-us-west1
-    zone: us-west1-c
-    cluster-version: "1.10"
-    initialNodeCount: 3
-    image-type: cos
-    tags: kc-node
-    enable-ip-alias: true
-    cluster-ipv4-cidr: 10.128.0.0/19
-    services-ipv4-cidr: 10.228.0.0/20
+    subnetworks:
+      - name: subnet1
+        region: us-west1
+        cidr: 10.1.0.0/28
+      - name: subnet2
+        region: us-east1
+        cidr: 10.2.0.0/28
+
+# The "name" property below will be the name of the new network
+- name: network2
+  type: network.py
+  properties:
+    subnetworks:
+      - name: subnet3
+        region: us-west1
+        cidr: 10.11.0.0/28
+      - name: subnet4
+        region: us-east1
+        cidr: 10.12.0.0/28

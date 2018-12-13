@@ -31,3 +31,45 @@ resources:
     enable-ip-alias: true
     cluster-ipv4-cidr: 10.108.0.0/19
     services-ipv4-cidr: 10.208.0.0/20
+
+- name: cluster2
+  type: cluster.py
+  properties:
+    network: network1
+    subnet: subnet2-us-east1
+    zone: us-east1-b
+    cluster-version: "1.10"
+    initialNodeCount: 3
+    image-type: cos
+    tags: kc-node
+    enable-ip-alias: true
+    cluster-ipv4-cidr: 10.118.0.0/19
+    services-ipv4-cidr: 10.218.0.0/20
+
+- name: cluster3
+  type: cluster.py
+  properties:
+    network: network2
+    subnet: subnet3-us-west1
+    zone: us-west1-c
+    cluster-version: "1.10"
+    initialNodeCount: 3
+    image-type: cos
+    tags: kc-node
+    enable-ip-alias: true
+    cluster-ipv4-cidr: 10.128.0.0/19
+    services-ipv4-cidr: 10.228.0.0/20
+
+- name: cluster4
+  type: cluster.py
+  properties:
+    network: network2
+    subnet: subnet4-us-east1
+    zone: us-east1-c
+    cluster-version: "1.10"
+    initialNodeCount: 3
+    image-type: cos
+    tags: kc-node
+    enable-ip-alias: true
+    cluster-ipv4-cidr: 10.138.0.0/19
+    services-ipv4-cidr: 10.238.0.0/20
