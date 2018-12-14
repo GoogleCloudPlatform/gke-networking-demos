@@ -16,7 +16,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-nginx-ilb-2
+  name: my-nginx-ilb
   annotations:
     cloud.google.com/load-balancer-type: "Internal"
   labels:

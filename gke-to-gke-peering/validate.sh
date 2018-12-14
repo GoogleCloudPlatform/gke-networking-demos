@@ -79,6 +79,19 @@ if ! verify_cidr_range "${PROJECT_ID}" "subnet4-us-east1" "10.12.0.0/28"; then
   exit 1
 fi
 
+### Ensure that VPC peering exists
+if ! network_peering_exists "${PROJECT_ID}" "network1"; then
+    echo "Peering does not exist"
+    echo "Terminating..."
+    exit 1
+fi
+
+if ! network_peering_exists "${PROJECT_ID}" "network2"; then
+    echo "Peering does not exist"
+    echo "Terminating..."
+    exit 1
+fi
+
 ### Ensure that the clusters are running
 for (( c=1; c<=4; c++ ))
 do
