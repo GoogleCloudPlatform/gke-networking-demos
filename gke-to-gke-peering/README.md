@@ -105,8 +105,8 @@ those clusters.
 1. VPC Peering connection with network1.
 
 ### Notes
-1. Region for subnets and Node CIDR can be customized in yaml files at /network/*.yaml files.
-1. Cluster attributes like zone, image, node count, cluster CIDR and service CIDR can be customized in yaml files at clusters/*.yaml.
+1. Region for subnets and Node CIDR can be customized in /network/network.yaml.
+1. Cluster attributes like zone, image, node count, cluster CIDR and service CIDR can be customized in clusters/cluster.yaml.
 1. To add additional custom attributes to network or clusters yaml files and deployment manager scripts at /network/*.py or clusters/*.py needs to be updated accordingly.
 
 ## Prerequisites
@@ -123,7 +123,7 @@ If you do not have a Google Cloud account please signup for a free trial
 
 Click the button below to run the demo in a [Google Cloud Shell](https://cloud.google.com/shell/docs/).
 
-[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https%3A%2F%2Fgithub.com%2FGoogleCloudPlatform%2Fgke-networking-demos&page=editor&tutorial=gke-to-gke-peering/README.md)
+[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https://github.com/GoogleCloudPlatform/gke-networking-demos.git&cloudshell_git_branch=master&cloudshell_working_dir=gke-to-gke-peering&cloudshell_tutorial=README.md)
 
 All the tools for the demo are installed. When using Cloud Shell execute the following
 command in order to setup gcloud cli.

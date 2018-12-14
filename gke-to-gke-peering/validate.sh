@@ -18,25 +18,30 @@ set -o nounset
 set -o pipefail
 
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-ROOT="$(dirname "$dir")"
+ROOT="$(dirname "${dir}")"
 
 #shellcheck disable=SC1090
 source "${ROOT}/verify-functions.sh"
 
 PROJECT_ID=$(gcloud config get-value project)
-if [ -z "$PROJECT_ID" ]
+if [ -z "${PROJECT_ID}" ]
   then echo >&2 "I require default project is set but it's not. Aborting."; exit 1;
 fi
 
 ### Obtain Cluster Zone
-CLUSTER1_ZONE=$( gcloud container clusters list \
-  | grep "cluster1" | awk '{ print $2 }' )
-CLUSTER2_ZONE=$( gcloud container clusters list \
-  | grep "cluster2" | awk '{ print $2 }' )
-CLUSTER3_ZONE=$( gcloud container clusters list \
-  | grep "cluster3" | awk '{ print $2 }' )
-CLUSTER4_ZONE=$( gcloud container clusters list \
-  | grep "cluster4" | awk '{ print $2 }' )
+CLUSTER1_ZONE=$(gcloud container clusters list \
+  --filter="name=cluster-deployment-cluster1" --format "value(zone)")
+CLUSTER2_ZONE=$(gcloud container clusters list \
+  --filter="name=cluster-deployment-cluster2" --format "value(zone)")
+CLUSTER3_ZONE=$(gcloud container clusters list \
+  --filter="name=cluster-deployment-cluster3" --format "value(zone)")
+CLUSTER4_ZONE=$(gcloud container clusters list \
+  --filter="name=cluster-deployment-cluster4" --format "value(zone)")
+
+CLUSTER1_CONTEXT="gke_${PROJECT_ID}_${CLUSTER1_ZONE}_cluster-deployment-cluster1"
+CLUSTER2_CONTEXT="gke_${PROJECT_ID}_${CLUSTER2_ZONE}_cluster-deployment-cluster2"
+CLUSTER3_CONTEXT="gke_${PROJECT_ID}_${CLUSTER3_ZONE}_cluster-deployment-cluster3"
+CLUSTER4_CONTEXT="gke_${PROJECT_ID}_${CLUSTER4_ZONE}_cluster-deployment-cluster4"
 
 ### Ensure that the Networks exists
 if ! network_exists "${PROJECT_ID}" "network1" || \
@@ -74,6 +79,19 @@ if ! verify_cidr_range "${PROJECT_ID}" "subnet4-us-east1" "10.12.0.0/28"; then
   exit 1
 fi
 
+### Ensure that VPC peering exists
+if ! network_peering_exists "${PROJECT_ID}" "network1"; then
+    echo "Peering does not exist"
+    echo "Terminating..."
+    exit 1
+fi
+
+if ! network_peering_exists "${PROJECT_ID}" "network2"; then
+    echo "Peering does not exist"
+    echo "Terminating..."
+    exit 1
+fi
+
 ### Ensure that the clusters are running
 for (( c=1; c<=4; c++ ))
 do
@@ -85,64 +103,56 @@ do
 done
 
 ### Check external nginx service ips for cluster1
-if ! access_service "${PROJECT_ID}" \
-  "gke_${PROJECT_ID}_${CLUSTER1_ZONE}_cluster-deployment-cluster1" "my-nginx-lb"; then
+if ! access_service "${PROJECT_ID}" "${CLUSTER1_CONTEXT}" "my-nginx-lb"; then
   echo "Service ip is not available"
   echo "Terminating..."
   exit 1
 fi
 
 ### Check internal nginx service ips for cluster1
-if ! access_service "${PROJECT_ID}" \
-  "gke_${PROJECT_ID}_${CLUSTER1_ZONE}_cluster-deployment-cluster1" "my-nginx-ilb"; then
+if ! access_service "${PROJECT_ID}" "${CLUSTER1_CONTEXT}" "my-nginx-ilb"; then
   echo "Service ip is not available"
   echo "Terminating..."
   exit 1
 fi
 
 ### Check external nginx service ips for cluster2
-if ! access_service "${PROJECT_ID}" \
-  "gke_${PROJECT_ID}_${CLUSTER2_ZONE}_cluster-deployment-cluster2" "my-nginx-lb-2"; then
+if ! access_service "${PROJECT_ID}" "${CLUSTER2_CONTEXT}" "my-nginx-lb"; then
   echo "Service ip is not available"
   echo "Terminating..."
   exit 1
 fi
 
 ### Check internal nginx service ips for cluster2
-if ! access_service "${PROJECT_ID}" \
-  "gke_${PROJECT_ID}_${CLUSTER2_ZONE}_cluster-deployment-cluster2" "my-nginx-ilb-2"; then
+if ! access_service "${PROJECT_ID}" "${CLUSTER2_CONTEXT}" "my-nginx-ilb"; then
   echo "Service ip is not available"
   echo "Terminating..."
   exit 1
 fi
 
 ### Check external nginx service ips for cluster3
-if ! access_service "${PROJECT_ID}" \
-  "gke_${PROJECT_ID}_${CLUSTER3_ZONE}_cluster-deployment-cluster3" "my-nginx-lb"; then
+if ! access_service "${PROJECT_ID}" "${CLUSTER3_CONTEXT}" "my-nginx-lb"; then
   echo "Service ip is not available"
   echo "Terminating..."
   exit 1
 fi
 
 ### Check internal nginx service ips for cluster3
-if ! access_service "${PROJECT_ID}" \
-  "gke_${PROJECT_ID}_${CLUSTER3_ZONE}_cluster-deployment-cluster3" "my-nginx-ilb"; then
+if ! access_service "${PROJECT_ID}" "${CLUSTER3_CONTEXT}" "my-nginx-ilb"; then
   echo "Service ip is not available"
   echo "Terminating..."
   exit 1
 fi
 
 ### Check external nginx service ips for cluster4
-if ! access_service "${PROJECT_ID}" \
-  "gke_${PROJECT_ID}_${CLUSTER4_ZONE}_cluster-deployment-cluster4" "my-nginx-lb-2"; then
+if ! access_service "${PROJECT_ID}" "${CLUSTER4_CONTEXT}" "my-nginx-lb"; then
   echo "Service ip is not available"
   echo "Terminating..."
   exit 1
 fi
 
 ### Check internal nginx service ips for cluster4
-if ! access_service "${PROJECT_ID}" \
-  "gke_${PROJECT_ID}_${CLUSTER4_ZONE}_cluster-deployment-cluster4" "my-nginx-ilb-2"; then
+if ! access_service "${PROJECT_ID}" "${CLUSTER4_CONTEXT}" "my-nginx-ilb"; then
   echo "Service ip is not available"
   echo "Terminating..."
   exit 1
