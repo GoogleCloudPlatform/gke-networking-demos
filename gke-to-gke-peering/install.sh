@@ -20,7 +20,7 @@
 ### Deployment manager templates, gcloud and kubectl commands are used.
 
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-ROOT="$(dirname "$dir")"
+ROOT="$(dirname "${dir}")"
 
 #shellcheck disable=SC1090
 source "${ROOT}/verify-functions.sh"
@@ -33,7 +33,7 @@ command -v kubectl >/dev/null 2>&1 || \
 
 ### Obtain current active PROJECT_ID
 PROJECT_ID=$(gcloud config get-value project)
-if [ -z "$PROJECT_ID" ]
+if [ -z "${PROJECT_ID}" ]
   then echo >&2 "I require default project is set but it's not. Aborting."; exit 1;
 fi
 
@@ -73,13 +73,13 @@ gcloud services enable \
 ### create networks and subnets
 if ! deployment_exists "${PROJECT_ID}" "network-deployment"; then
   gcloud deployment-manager deployments create network-deployment \
-    --config "$ROOT"/network/network.yaml
+    --config "${ROOT}"/network/network.yaml
 fi
 
 ### create clusters
 if ! deployment_exists "${PROJECT_ID}" "cluster-deployment"; then
   gcloud deployment-manager deployments create cluster-deployment \
-    --config "$ROOT"/clusters/cluster.yaml
+    --config "${ROOT}"/clusters/cluster.yaml
 fi
 
 ### create VPC peering connections between network1 & network2
@@ -93,42 +93,42 @@ gcloud compute networks peerings create peer-network2-to-network1 \
 gcloud container clusters get-credentials cluster-deployment-cluster1 \
   --zone us-west1-b
 kubectl config set-context "$(kubectl config current-context)" --namespace=default
-kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
-kubectl create -f "$ROOT"/manifests/cluster-ip-svc.yaml
-kubectl create -f "$ROOT"/manifests/nodeport-svc.yaml
-kubectl create -f "$ROOT"/manifests/ilb-svc.yaml
-kubectl create -f "$ROOT"/manifests/lb-svc.yaml
-kubectl create -f "$ROOT"/manifests/ingress-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
+kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/nodeport-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/lb-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/ingress-svc.yaml
 
 ### Fetch cluster2 credentials, deploy nginx pods in cluster2 and create services
 gcloud container clusters get-credentials cluster-deployment-cluster2 \
   --zone us-east1-b
 kubectl config set-context "$(kubectl config current-context)" --namespace=default
-kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
-kubectl create -f "$ROOT"/manifests/cluster-ip-svc1.yaml
-kubectl create -f "$ROOT"/manifests/nodeport-svc1.yaml
-kubectl create -f "$ROOT"/manifests/ilb-svc1.yaml
-kubectl create -f "$ROOT"/manifests/lb-svc1.yaml
-kubectl create -f "$ROOT"/manifests/ingress-svc1.yaml
+kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
+kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/nodeport-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/lb-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/ingress-svc.yaml
 
 ### Fetch cluster3 credentials, deploy nginx pods in cluster3 and create services
 gcloud container clusters get-credentials cluster-deployment-cluster3 \
   --zone us-west1-c
 kubectl config set-context "$(kubectl config current-context)" --namespace=default
-kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
-kubectl create -f "$ROOT"/manifests/cluster-ip-svc.yaml
-kubectl create -f "$ROOT"/manifests/nodeport-svc.yaml
-kubectl create -f "$ROOT"/manifests/ilb-svc.yaml
-kubectl create -f "$ROOT"/manifests/lb-svc.yaml
-kubectl create -f "$ROOT"/manifests/ingress-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
+kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/nodeport-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/lb-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/ingress-svc.yaml
 
 ### Fetch cluster4 credentials, deploy nginx pods in cluster4 and create services
 gcloud container clusters get-credentials cluster-deployment-cluster4 \
   --zone us-east1-c
 kubectl config set-context "$(kubectl config current-context)" --namespace=default
-kubectl create -f "$ROOT"/manifests/run-my-nginx.yaml
-kubectl create -f "$ROOT"/manifests/cluster-ip-svc1.yaml
-kubectl create -f "$ROOT"/manifests/nodeport-svc1.yaml
-kubectl create -f "$ROOT"/manifests/ilb-svc1.yaml
-kubectl create -f "$ROOT"/manifests/lb-svc1.yaml
-kubectl create -f "$ROOT"/manifests/ingress-svc1.yaml
+kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
+kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/nodeport-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/lb-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/ingress-svc.yaml

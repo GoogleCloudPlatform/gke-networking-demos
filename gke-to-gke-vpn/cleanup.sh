@@ -16,7 +16,7 @@
 ### Deletes all the resources created as part of gke-to-gke-vpn POC.
 
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-ROOT="$(dirname "$dir")"
+ROOT="$(dirname "${dir}")"
 
 #shellcheck disable=SC1090
 source "${ROOT}/verify-functions.sh"
@@ -29,7 +29,7 @@ command -v kubectl >/dev/null 2>&1 || \
 
 ### Obtain current active PROJECT_ID
 PROJECT_ID=$(gcloud config get-value project)
-if [ -z "$PROJECT_ID" ]
+if [ -z "${PROJECT_ID}" ]
   then echo >&2 "I require default project is set but it's not. Aborting."; exit 1;
 fi
 
@@ -38,12 +38,12 @@ if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster1"; then
   gcloud container clusters get-credentials cluster-deployment-cluster1 \
     --zone us-west1-b
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
-  kubectl delete -f "$ROOT"/manifests/ingress-svc.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/lb-svc.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/ilb-svc.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/nodeport-svc.yaml
-  kubectl delete -f "$ROOT"/manifests/cluster-ip-svc.yaml
-  kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
+  kubectl delete -f "${ROOT}"/manifests/ingress-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/ilb-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
+  kubectl delete -f "${ROOT}"/manifests/cluster-ip-svc.yaml
+  kubectl delete -f "${ROOT}"/manifests/run-my-nginx.yaml
 fi
 
 ### Delete cluster2 services
@@ -51,12 +51,12 @@ if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster2"; then
   gcloud container clusters get-credentials cluster-deployment-cluster2 \
     --zone us-east1-b
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
-  kubectl delete -f "$ROOT"/manifests/ingress-svc1.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/lb-svc1.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/ilb-svc1.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/nodeport-svc1.yaml
-  kubectl delete -f "$ROOT"/manifests/cluster-ip-svc1.yaml
-  kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
+  kubectl delete -f "${ROOT}"/manifests/ingress-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/ilb-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
+  kubectl delete -f "${ROOT}"/manifests/cluster-ip-svc.yaml
+  kubectl delete -f "${ROOT}"/manifests/run-my-nginx.yaml
 fi
 
 ### Delete cluster3 services
@@ -64,12 +64,12 @@ if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster3"; then
   gcloud container clusters get-credentials cluster-deployment-cluster3 \
     --zone us-west1-c
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
-  kubectl delete -f "$ROOT"/manifests/ingress-svc.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/lb-svc.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/ilb-svc.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/nodeport-svc.yaml
-  kubectl delete -f "$ROOT"/manifests/cluster-ip-svc.yaml
-  kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
+  kubectl delete -f "${ROOT}"/manifests/ingress-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/ilb-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
+  kubectl delete -f "${ROOT}"/manifests/cluster-ip-svc.yaml
+  kubectl delete -f "${ROOT}"/manifests/run-my-nginx.yaml
 fi
 
 ### Delete cluster4 services
@@ -77,12 +77,12 @@ if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster4"; then
   gcloud container clusters get-credentials cluster-deployment-cluster4 \
     --zone us-east1-c
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
-  kubectl delete -f "$ROOT"/manifests/ingress-svc1.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/lb-svc1.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/ilb-svc1.yaml --cascade --grace-period 10
-  kubectl delete -f "$ROOT"/manifests/nodeport-svc1.yaml
-  kubectl delete -f "$ROOT"/manifests/cluster-ip-svc1.yaml
-  kubectl delete -f "$ROOT"/manifests/run-my-nginx.yaml
+  kubectl delete -f "${ROOT}"/manifests/ingress-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/ilb-svc.yaml --cascade --grace-period 10
+  kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
+  kubectl delete -f "${ROOT}"/manifests/cluster-ip-svc.yaml
+  kubectl delete -f "${ROOT}"/manifests/run-my-nginx.yaml
 fi
 
 ### wait for all service related backends to get deleted.
