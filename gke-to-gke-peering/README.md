@@ -151,7 +151,7 @@ When not using Cloud Shell, the following tools are required.
 1. Increase quotas from below resources. Refer to https://cloud.google.com/compute/quotas.
 	* Forwarding rules (minimun 24)
 	* In-use IP addresses global (minimun 20)
-	* Backend services (minimun 10)
+	* Backend services (minimun 8)
 	* Firewall rules (minimun 42)
 
 1. Pull the code from git repo.
