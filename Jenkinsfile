@@ -66,6 +66,9 @@ spec:
           sh "gcloud config set compute/zone ${env.CLUSTER_ZONE}"
           sh "gcloud config set core/project ${env.PROJECT_ID}"
           sh "gcloud config set compute/region ${env.REGION}"
+
+          // Build and push container image to pso_examples
+          sh "make build_container"
          }
     }
     stage('Lint') {
