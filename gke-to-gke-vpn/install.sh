@@ -51,7 +51,7 @@ if ! meets_quota "${PROJECT_ID}" "IN_USE_ADDRESSES" 20; then
 fi
 
 ### Ensure that the Backend services quota is met
-if ! meets_quota "${PROJECT_ID}" "BACKEND_SERVICES" 10; then
+if ! meets_quota "${PROJECT_ID}" "BACKEND_SERVICES" 8; then
   echo "Refer to https://cloud.google.com/compute/quotas"
   echo "Terminating..."
   exit 1

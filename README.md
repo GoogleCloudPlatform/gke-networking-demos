@@ -35,8 +35,8 @@ The kubectl CLI is used to interteract with both Kubernetes Engine and kubernete
 for multiple platforms are available online.
 
 ## Directory Structure
-1. The [gke-to-gke-vpc-peering](gke-to-gke-vpc-peering) and [gke-to-gke-vpn](gke-to-gke-vpn) folders each contain a project.
-1. README files exist for the above examples; [gke-to-gke-vpc-peering/README.md](gke-to-gke-vpc-peering/README.md) and [gke-to-gke-vpn/README.md](gke-to-gke-vpn/README.md).
+1. The [gke-to-gke-peering](gke-to-gke-peering) and [gke-to-gke-vpn](gke-to-gke-vpn) folders each contain a project.
+1. README files exist for the above examples; [gke-to-gke-peering/README.md](gke-to-gke-peering/README.md) and [gke-to-gke-vpn/README.md](gke-to-gke-vpn/README.md).
 1. The [network](network) folder contains the manifest files and deployment manager templates to setup networks.
 1. The [clusters](clusters) folder contains the manifest files and deployment manager templates to create Kubernetes Engine clusters.
 1. The [manifests](clusters) folder contains the manifest files to create Kubernetes Engine services.

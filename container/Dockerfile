@@ -12,24 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-### nginx app deployment configuration
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-nginx
-spec:
-  selector:
-    matchLabels:
-      run: my-nginx
-  replicas: 2
-  template:
-    metadata:
-      labels:
-        run: my-nginx
-    spec:
-      containers:
-      - name: my-nginx
-        image: gcr.io/pso-examples/nginx-curl:1.0.0
-        ports:
-        - containerPort: 80
+FROM nginx:alpine
 
+RUN apk add --no-cache curl
