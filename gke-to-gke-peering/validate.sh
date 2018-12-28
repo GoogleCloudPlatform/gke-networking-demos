@@ -123,13 +123,6 @@ if ! access_service "${PROJECT_ID}" "${CLUSTER2_CONTEXT}" "my-nginx-lb"; then
   exit 1
 fi
 
-### Check internal nginx service ips for cluster2
-if ! access_service "${PROJECT_ID}" "${CLUSTER2_CONTEXT}" "my-nginx-ilb"; then
-  echo "Service ip is not available"
-  echo "Terminating..."
-  exit 1
-fi
-
 ### Check external nginx service ips for cluster3
 if ! access_service "${PROJECT_ID}" "${CLUSTER3_CONTEXT}" "my-nginx-lb"; then
   echo "Service ip is not available"
@@ -146,13 +139,6 @@ fi
 
 ### Check external nginx service ips for cluster4
 if ! access_service "${PROJECT_ID}" "${CLUSTER4_CONTEXT}" "my-nginx-lb"; then
-  echo "Service ip is not available"
-  echo "Terminating..."
-  exit 1
-fi
-
-### Check internal nginx service ips for cluster4
-if ! access_service "${PROJECT_ID}" "${CLUSTER4_CONTEXT}" "my-nginx-ilb"; then
   echo "Service ip is not available"
   echo "Terminating..."
   exit 1

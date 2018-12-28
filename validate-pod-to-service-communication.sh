@@ -42,9 +42,6 @@ kubectl config set-context "$(kubectl config current-context)" --namespace=defau
 
 POD_NAME=$(kubectl get pods -l run=my-nginx -o jsonpath='{.items[].metadata.name}')
 
-POD_NAME_CLUSTER4=$( kubectl get pods --cluster "${CLUSTER4_CONTEXT}" \
-  -l run=my-nginx -o jsonpath='{.items[].metadata.name}')
-
 ### Within cluster tests
 echo "----------------------------------------"
 echo "Testing: cluster1 -> cluster1 clusterIP service"
@@ -80,38 +77,10 @@ echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}:8080"
 kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}":8080
 echo "----------------------------------------"
 
-echo "----------------------------------------"
-echo "Testing: cluster4 -> cluster2 ILB (same region)"
-SERVICE_IP=$( kubectl get services --cluster "${CLUSTER2_CONTEXT}" \
-  --field-selector metadata.name=my-nginx-ilb \
-  -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec --cluster ${CLUSTER4_CONTEXT} \
-  ${POD_NAME_CLUSTER4} -c my-nginx -- curl -s -I ${SERVICE_IP}:8080"
-kubectl exec --cluster "${CLUSTER4_CONTEXT}" \
-  "${POD_NAME_CLUSTER4}" -c my-nginx -- curl -s -I "${SERVICE_IP}":8080
-echo "----------------------------------------"
-
 #### Ingress tests
-echo "----------------------------------------"
-echo "Testing: cluster1 -> cluster1 ingress service"
-SERVICE_IP=$(kubectl get ingress --field-selector metadata.name=my-nginx-ingress \
-  -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}"
-kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}"
-echo "----------------------------------------"
-
 echo "----------------------------------------"
 echo "Testing: cluster1 -> cluster2 ingress service"
 SERVICE_IP=$(kubectl get ingress --cluster "${CLUSTER2_CONTEXT}" \
-  --field-selector metadata.name=my-nginx-ingress \
-  -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}"
-kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}"
-echo "----------------------------------------"
-
-echo "----------------------------------------"
-echo "Testing: cluster1 -> cluster3 ingress service"
-SERVICE_IP=$(kubectl get ingress --cluster "${CLUSTER3_CONTEXT}" \
   --field-selector metadata.name=my-nginx-ingress \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
 echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}"

@@ -211,7 +211,7 @@ the specification.
         * cluster4: 10.138.0.0/19
 1. Select "Kubernetes Engine"-> "Workloads" and verify that the status is OK for nginx pods.
 ![Workloads](../images/workloads.png)
-1. Select "Kubernetes Engine" -> "Services". and see that the cluster ip, nodeport, ILB, LB and ingress services are created for cluster1 and cluster2 and that cluster IP address of all the services for a cluster are drawn the service ipv4 CIDR range
+1. Select "Kubernetes Engine" -> "Services" and see that the cluster ip, nodeport, ILB and LB are created for cluster1 and that cluster IP address of all the services for a cluster are drawn the service ipv4 CIDR range
 ![Services](../images/services.png)
 1. Try to access the IP of the  external load balancer to view the nginx pods. The external IP
 will be displayed in the "my-nginx-lb" row:

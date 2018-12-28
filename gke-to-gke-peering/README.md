@@ -181,7 +181,8 @@ are drawn from the subnet's CIDR.
 1. Verify the created clusters in Kubernetes Engine. Click on the cluster hyperlink
 and verify that "Container address range" matches the specified cluster-ipv4-cidr.
 1. Click on workloads and verify that the status is OK for nginx pods.
-1. Click on discovery & load balancing. Verify that the cluster ip, nodeport, ILB, LB and ingress services are created for cluster1 and cluster2.
+1. Click on discovery & load balancing. Verify that the cluster ip, nodeport, ILB and LB are created for cluster1.
+1. Click on discovery & load balancing. Verify that the cluster ip, nodeport, LB and ingress services are created for cluster2.
 1. Verify that cluster IP address of all the services for a cluster are drawn
 from service-ipv4-cidr.
 1. Access the endpoint for URL for external load balancer to view the nginx pods.

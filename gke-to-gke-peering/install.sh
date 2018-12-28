@@ -96,9 +96,8 @@ kubectl config set-context "$(kubectl config current-context)" --namespace=defau
 kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
 kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
 kubectl apply -f "${ROOT}"/manifests/nodeport-svc.yaml
-kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
 kubectl apply -f "${ROOT}"/manifests/lb-svc.yaml
-kubectl apply -f "${ROOT}"/manifests/ingress-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
 
 ### Fetch cluster2 credentials, deploy nginx pods in cluster2 and create services
 gcloud container clusters get-credentials cluster-deployment-cluster2 \
@@ -107,7 +106,6 @@ kubectl config set-context "$(kubectl config current-context)" --namespace=defau
 kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
 kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
 kubectl apply -f "${ROOT}"/manifests/nodeport-svc.yaml
-kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
 kubectl apply -f "${ROOT}"/manifests/lb-svc.yaml
 kubectl apply -f "${ROOT}"/manifests/ingress-svc.yaml
 
@@ -118,9 +116,8 @@ kubectl config set-context "$(kubectl config current-context)" --namespace=defau
 kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
 kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
 kubectl apply -f "${ROOT}"/manifests/nodeport-svc.yaml
-kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
 kubectl apply -f "${ROOT}"/manifests/lb-svc.yaml
-kubectl apply -f "${ROOT}"/manifests/ingress-svc.yaml
+kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
 
 ### Fetch cluster4 credentials, deploy nginx pods in cluster4 and create services
 gcloud container clusters get-credentials cluster-deployment-cluster4 \
@@ -129,6 +126,5 @@ kubectl config set-context "$(kubectl config current-context)" --namespace=defau
 kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
 kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
 kubectl apply -f "${ROOT}"/manifests/nodeport-svc.yaml
-kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
 kubectl apply -f "${ROOT}"/manifests/lb-svc.yaml
 kubectl apply -f "${ROOT}"/manifests/ingress-svc.yaml
