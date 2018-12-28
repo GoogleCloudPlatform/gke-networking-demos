@@ -50,16 +50,16 @@ echo "----------------------------------------"
 echo "Testing: cluster1 -> cluster1 clusterIP service"
 SERVICE_IP=$(kubectl get services --field-selector metadata.name=my-nginx \
   -o jsonpath='{.items[].spec.clusterIP}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}"
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}"
 echo "----------------------------------------"
 
 echo "----------------------------------------"
 echo "Testing: cluster1 -> cluster1 nodeport service"
 SERVICE_IP=$(kubectl get services --field-selector metadata.name=my-nginx-nodeport \
   -o jsonpath='{.items[].spec.clusterIP}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}:8080"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}":8080
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}:8080"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}":8080
 echo "----------------------------------------"
 
 ### Internal Load Balancer tests
@@ -67,8 +67,8 @@ echo "----------------------------------------"
 echo "Testing: cluster1 -> cluster1 ILB service"
 SERVICE_IP=$(kubectl get services --field-selector metadata.name=my-nginx-ilb \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}:8080"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}":8080
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}:8080"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}":8080
 echo "----------------------------------------"
 
 echo "----------------------------------------"
@@ -76,8 +76,8 @@ echo "Testing: cluster1 -> cluster3 ILB (same region)"
 SERVICE_IP=$( kubectl get services --cluster "${CLUSTER3_CONTEXT}" \
   --field-selector metadata.name=my-nginx-ilb \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}:8080"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}":8080
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}:8080"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}":8080
 echo "----------------------------------------"
 
 echo "----------------------------------------"
@@ -86,9 +86,9 @@ SERVICE_IP=$( kubectl get services --cluster "${CLUSTER2_CONTEXT}" \
   --field-selector metadata.name=my-nginx-ilb \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
 echo "kubectl exec --cluster ${CLUSTER4_CONTEXT} \
-  ${POD_NAME_CLUSTER4} -c my-test -- curl -s -I ${SERVICE_IP}:8080"
+  ${POD_NAME_CLUSTER4} -c my-nginx -- curl -s -I ${SERVICE_IP}:8080"
 kubectl exec --cluster "${CLUSTER4_CONTEXT}" \
-  "${POD_NAME_CLUSTER4}" -c my-test -- curl -s -I "${SERVICE_IP}":8080
+  "${POD_NAME_CLUSTER4}" -c my-nginx -- curl -s -I "${SERVICE_IP}":8080
 echo "----------------------------------------"
 
 #### Ingress tests
@@ -96,8 +96,8 @@ echo "----------------------------------------"
 echo "Testing: cluster1 -> cluster1 ingress service"
 SERVICE_IP=$(kubectl get ingress --field-selector metadata.name=my-nginx-ingress \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}"
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}"
 echo "----------------------------------------"
 
 echo "----------------------------------------"
@@ -105,8 +105,8 @@ echo "Testing: cluster1 -> cluster2 ingress service"
 SERVICE_IP=$(kubectl get ingress --cluster "${CLUSTER2_CONTEXT}" \
   --field-selector metadata.name=my-nginx-ingress \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}"
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}"
 echo "----------------------------------------"
 
 echo "----------------------------------------"
@@ -114,8 +114,8 @@ echo "Testing: cluster1 -> cluster3 ingress service"
 SERVICE_IP=$(kubectl get ingress --cluster "${CLUSTER3_CONTEXT}" \
   --field-selector metadata.name=my-nginx-ingress \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}"
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}"
 echo "----------------------------------------"
 
 echo "----------------------------------------"
@@ -123,8 +123,8 @@ echo "Testing: cluster1 -> cluster4 ingress service"
 SERVICE_IP=$(kubectl get ingress --cluster "${CLUSTER4_CONTEXT}" \
   --field-selector metadata.name=my-nginx-ingress \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}"
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}"
 echo "----------------------------------------"
 
 #### Load Balancer tests
@@ -132,8 +132,8 @@ echo "----------------------------------------"
 echo "Testing: cluster1 -> cluster1 LB service"
 SERVICE_IP=$(kubectl get services --field-selector metadata.name=my-nginx-lb \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}:8080"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}":8080
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}:8080"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}":8080
 echo "----------------------------------------"
 
 echo "----------------------------------------"
@@ -141,8 +141,8 @@ echo "Testing: cluster1 -> cluster2 LB service (cross region)"
 SERVICE_IP=$( kubectl get services --cluster "${CLUSTER2_CONTEXT}" \
   --field-selector metadata.name=my-nginx-lb \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}:8080"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}":8080
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}:8080"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}":8080
 echo "----------------------------------------"
 
 echo "----------------------------------------"
@@ -150,8 +150,8 @@ echo "Testing: cluster1 -> cluster3 LB service"
 SERVICE_IP=$( kubectl get services --cluster "${CLUSTER3_CONTEXT}" \
   --field-selector metadata.name=my-nginx-lb \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}:8080"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}":8080
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}:8080"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}":8080
 echo "----------------------------------------"
 
 echo "----------------------------------------"
@@ -159,6 +159,6 @@ echo "Testing: cluster1 -> cluster4 LB service (cross region)"
 SERVICE_IP=$( kubectl get services --cluster "${CLUSTER4_CONTEXT}" \
   --field-selector metadata.name=my-nginx-lb \
   -o jsonpath='{.items[].status.loadBalancer.ingress[].ip}')
-echo "kubectl exec ${POD_NAME} -c my-test -- curl -s -I ${SERVICE_IP}:8080"
-kubectl exec "${POD_NAME}" -c my-test -- curl -s -I "${SERVICE_IP}":8080
+echo "kubectl exec ${POD_NAME} -c my-nginx -- curl -s -I ${SERVICE_IP}:8080"
+kubectl exec "${POD_NAME}" -c my-nginx -- curl -s -I "${SERVICE_IP}":8080
 echo "----------------------------------------"

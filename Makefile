@@ -57,3 +57,8 @@ check_trailing_whitespace:
 check_headers:
 	@echo "Checking file headers"
 	@python test/verify_boilerplate.py
+
+.PHONY: build_container
+build_container:
+	gcloud builds submit container --project=pso-examples \
+	  --config="container/cloudbuild.yaml"
