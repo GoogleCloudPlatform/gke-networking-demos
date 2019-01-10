@@ -37,14 +37,14 @@ if [ -z "${PROJECT_ID}" ]
 fi
 
 ### Ensure that the Forwarding rules quota is met
-if ! meets_quota "${PROJECT_ID}" "FORWARDING_RULES" 24; then
+if ! meets_quota "${PROJECT_ID}" "FORWARDING_RULES" 8; then
   echo "Refer to https://cloud.google.com/compute/quotas"
   echo "Terminating..."
   exit 1
 fi
 
 ### Ensure that the In-use IP addresses global quota is met
-if ! meets_quota "${PROJECT_ID}" "IN_USE_ADDRESSES" 20; then
+if ! meets_quota "${PROJECT_ID}" "IN_USE_ADDRESSES" 6; then
   echo "Refer to https://cloud.google.com/compute/quotas"
   echo "Terminating..."
   exit 1
