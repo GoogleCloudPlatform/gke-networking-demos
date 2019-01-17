@@ -104,7 +104,7 @@ those clusters.
 
 ### Notes
 
-For quicklabs you do not need to make these changes.
+For qwicklabs you do not need to make these changes.
 
 1. Region for subnets and Node CIDR can be customized in /network/network.yaml.
 1. Cluster attributes like zone, image, node count, cluster CIDR and service CIDR can be customized in clusters/cluster.yaml.
@@ -135,7 +135,7 @@ The following steps will allow a user to to run the demo:
 Execute the script `./install.sh` that is located in the `gke-to-gke-peering` directory.
 
 ## Validation
-1. Make sure that there are no errors in the install script execution.
+1. Make sure that there are no errors in the install script execution. If you have problems refer to the Troubleshooting section below.
 1. Login to GCP console.
 1. Verify that the CIDR ranges of subnet-us-west1 and subnet-us-east1 matches
 the specification.
@@ -148,7 +148,7 @@ and verify that "Container address range" matches the specified cluster-ipv4-cid
 1. Click on discovery & load balancing. Verify that the cluster ip, nodeport, LB and ingress services are created for cluster2.
 1. Verify that cluster IP address of all the services for a cluster are drawn
 from service-ipv4-cidr.
-1. Access the endpoint for URL for external load balancer to view the nginx pods.
+1. Access the endpoint URL for external load balancer to view the nginx pods.
 1. Change directory to `gke-to-gke-peering`
 1. Run `./validate.sh`
 
