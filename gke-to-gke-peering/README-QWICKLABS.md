@@ -1,24 +1,21 @@
 # Kubernetes Engine Networking
+
 ## Table of Contents
 
 <!--ts-->
+* [Kubernetes Engine Communication Through VPC Peering](#kubernetes-engine-communication-through-vpc-peering)
 * [Introduction](#introduction)
 * [Architecture](#architecture)
-   * [GCP Network1](#gcp-network-network1)
+   * [GCP Network 1](#gcp-network-1)
       * [Kubernetes Engine Cluster 1](#kubernetes-engine-cluster-1)
       * [Kubernetes Engine Cluster 2](#kubernetes-engine-cluster-2)
       * [Other Resources](#other-resources)
-   * [GCP Network2](#gcp-network-network2)
+   * [GCP Network 2](#gcp-network-2)
       * [Kubernetes Engine Cluster 3](#kubernetes-engine-cluster-3)
       * [Kubernetes Engine Cluster 4](#kubernetes-engine-cluster-4)
       * [Other Resources](#other-resources-1)
    * [Notes](#notes)
-* [Prerequisites](#prerequisites)
-   * [Initialize Gcloud](#initalize-gcloud)
-   * [Supported Operating Systems](#supported-operating-systems)
-   * [Tools](#tools)
-   * [Versions](#versions)
-   * [Setup](#setup)
+   * [Initialize GCP Authorization](#initialize-gcp-authorization)
    * [Directory Structure](#directory-structure)
 * [Deployment Steps](#deployment-steps)
 * [Validation](#validation)
@@ -105,52 +102,22 @@ those clusters.
 1. VPC Peering connection with network1.
 
 ### Notes
+
+> If you get an error while running the install script, run the cleanup script or manually delete the resources and attempt the install script again. Manual deletion is covered in a section below, but using the cleanup script is hightly recommended.
+
+For qwicklabs you do not have to make these changes. These changes can be made if you are more advanced.
+
 1. Region for subnets and Node CIDR can be customized in /network/network.yaml.
 1. Cluster attributes like zone, image, node count, cluster CIDR and service CIDR can be customized in clusters/cluster.yaml.
-1. To add additional custom attributes to network or clusters yaml files and deployment manager scripts at /network/*.py or clusters/*.py needs to be updated accordingly.
+1. To add additional custom attributes to network or clusters yaml files, and deployment manager scripts, /network/\*.py or clusters/\*.py, need to be updated accordingly.
 
-## Prerequisites
-
-A Google Cloud account and project is required for this. The default quotas for project
-some resources will most likely need to be increased. The Setup section below covers
-increasing the quotas.
-
-Access to an existing Google Cloud project with the Kubernetes Engine service enabled
-If you do not have a Google Cloud account please signup for a free trial
-[here](https://cloud.google.com).
-
-### Initialize Gcloud
+### Initialize GCP Authorization
 
 When using Cloud Shell execute the following command in order to setup gcloud cli.
 
 ```console
 gcloud init
 ```
-
-### Supported Operating Systems
-
-This project will run on macOS, or in a [Google Cloud Shell](https://cloud.google.com/shell/docs/).
-
-### Tools
-
-When not using Cloud Shell, the following tools are required.
-
-1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )
-2. bash
-3. kubectl - ( >= v1.10.0-gke.0 )
-
-### Versions
-1. Kubernetes Engine >= 1.10.0-gke.0
-
-### Setup
-1. Increase quotas from below resources. Refer to https://cloud.google.com/compute/quotas.
-	* Forwarding rules (minimun 24)
-	* In-use IP addresses global (minimun 20)
-	* Backend services (minimun 4)
-	* Firewall rules (minimun 42)
-
-1. Pull the code from git repo.
-1. Optionally, customize the configuration in .yaml files under /network/ or /clusters/ or /manifests/, if needed.
 
 ### Directory Structure
 1. The root folder is the "gke-networking-demos" folder.
@@ -161,13 +128,12 @@ When not using Cloud Shell, the following tools are required.
 
 ## Deployment Steps
 
-The following steps will allow a user to
+The following steps will allow a user to to run the demo:
 
-1. Change directory to `gke-to-gke-peering`
-1. Run `./install.sh`
+Execute the script `./install.sh` that is located in the `gke-to-gke-peering` directory.
 
 ## Validation
-1. Make sure that there are no errors in the install script execution.
+1. Make sure that there are no errors in the install script execution. If you have problems refer to the Troubleshooting section below.
 1. Login to GCP console.
 1. Verify that the CIDR ranges of subnet-us-west1 and subnet-us-east1 matches
 the specification.
@@ -180,7 +146,7 @@ and verify that "Container address range" matches the specified cluster-ipv4-cid
 1. Click on discovery & load balancing. Verify that the cluster ip, nodeport, LB and ingress services are created for cluster2.
 1. Verify that cluster IP address of all the services for a cluster are drawn
 from service-ipv4-cidr.
-1. Access the endpoint for URL for external load balancer to view the nginx pods.
+1. Access the endpoint URL for external load balancer to view the nginx pods.
 1. Change directory to `gke-to-gke-peering`
 1. Run `./validate.sh`
 
@@ -201,7 +167,6 @@ from service-ipv4-cidr.
 4. Verify that the script executed with no errors.
 5. Verify that all the resources created are deleted.
 
-
 ## Troubleshooting
 
 1. Remember to enable API's as mentioned in deployment steps in the project where the resources are to be created. Otherwise, API not enabled error is thrown.
@@ -209,6 +174,7 @@ from service-ipv4-cidr.
 1. Make sure to have the right permissions for the GCP account to create above GCP/Kubernetes Engine resources in project. Otherwise, permission denied error is thrown.
 1. Make sure that the deployments created through install script are deleted before you try to re-install the resources. Otherwise, resources will not be installed properly.
 1. If there are any errors in cleanup script execution, refer to steps for deleting resources manually.
+1. If you get an error while running the install script, run the cleanup script or manually delete the resources and attempt the install script again.
 
 ## Deleting Resources Manually
 1. Goto Kubernetes Engine -> services. Delete all the services created through install script.
