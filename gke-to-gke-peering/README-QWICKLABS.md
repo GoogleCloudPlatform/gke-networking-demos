@@ -103,13 +103,13 @@ those clusters.
 
 ### Notes
 
-> If you get an error while running the install script run the cleanup script or manually delete the resources and attempt the install script again. Manual deletion is covered in a section below, but using the cleanup script is hightly recommended.
+> If you get an error while running the install script, run the cleanup script or manually delete the resources and attempt the install script again. Manual deletion is covered in a section below, but using the cleanup script is hightly recommended.
 
 For qwicklabs you do not have to make these changes. These changes can be made if you are more advanced.
 
 1. Region for subnets and Node CIDR can be customized in /network/network.yaml.
 1. Cluster attributes like zone, image, node count, cluster CIDR and service CIDR can be customized in clusters/cluster.yaml.
-1. To add additional custom attributes to network or clusters yaml files and deployment manager scripts at /network/*.py or clusters/*.py needs to be updated accordingly.
+1. To add additional custom attributes to network or clusters yaml files, and deployment manager scripts, /network/\*.py or clusters/\*.py, need to be updated accordingly.
 
 ### Initialize GCP Authorization
 
@@ -174,7 +174,7 @@ from service-ipv4-cidr.
 1. Make sure to have the right permissions for the GCP account to create above GCP/Kubernetes Engine resources in project. Otherwise, permission denied error is thrown.
 1. Make sure that the deployments created through install script are deleted before you try to re-install the resources. Otherwise, resources will not be installed properly.
 1. If there are any errors in cleanup script execution, refer to steps for deleting resources manually.
-1. If you get an error while running the install script run the cleanup script or manually delete the resources and attempt the install script again.
+1. If you get an error while running the install script, run the cleanup script or manually delete the resources and attempt the install script again.
 
 ## Deleting Resources Manually
 1. Goto Kubernetes Engine -> services. Delete all the services created through install script.
