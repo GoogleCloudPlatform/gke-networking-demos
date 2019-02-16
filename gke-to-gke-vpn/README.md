@@ -135,9 +135,7 @@ those clusters.
 
 ## Prerequisites
 
-A Google Cloud account and project is required for this. The default quotas for project
-some resources will most likely need to be increased. The Setup section below covers
-increasing the quotas.
+A Google Cloud account and project is required for this.
 
 Access to an existing Google Cloud project with the Kubernetes Engine service enabled
 If you do not have a Google Cloud account please signup for a free trial
@@ -167,16 +165,13 @@ When not using Cloud Shell, the following tools are required.
 1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )
 2. bash
 3. kubectl - ( >= v1.10.0-gke.0 )
+4. jq
 
 ### Versions
 1. Kubernetes Engine >= 1.10.0-gke.0
 
 ### Setup
-1. Increase quotas from below resources. Refer to https://cloud.google.com/compute/quotas.
-    * Forwarding rules (minimum 24)
-    * In-use IP addresses global (minimum 20)
-    * Backend services (minimum 4)
-    * Firewall rules (minimum 42)
+
 1. Pull the code from git repo.
 1. Optionally, customize the configuration in .yaml files under /network/ or /clusters/ or /manifests/, if needed.
 
@@ -225,7 +220,7 @@ will be displayed in the "my-nginx-lb" row:
 1. Clusters across the different regions communicate through the global load balancer, unless they are peered via VPN. When peered via VPN, clusters can still communicate via internal load balancers.
 1. All the services created to expose pods in a cluster are accessible to pods within that cluster.
 1. Refer to validate-pod-to-service-communication.sh script to view the commands to verify pod to service communication.
-1. Run `./validate-pod-to-service-communication.sh` located in the project root directory
+1. Change directory back to project root. Run `./validate-pod-to-service-communication.sh` located in the project root directory
 1. The above script demonstrates how the pods in cluster1 can access the local Kubernetes Engine services and the other Kubernetes Engine Internal/External load balancer services from the same or different regions.
 
 ## Tear Down
