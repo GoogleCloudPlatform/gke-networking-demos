@@ -24,7 +24,7 @@ resources:
     network: network1
     subnet: subnet1-us-west1
     zone: us-west1-b
-    cluster-version: "1.10"
+    cluster-version: "1.12"
     initialNodeCount: 3
     image-type: cos
     tags: kc-node
@@ -38,7 +38,7 @@ resources:
     network: network1
     subnet: subnet2-us-east1
     zone: us-east1-b
-    cluster-version: "1.10"
+    cluster-version: "1.12"
     initialNodeCount: 3
     image-type: cos
     tags: kc-node
