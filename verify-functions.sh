@@ -15,7 +15,6 @@
 # limitations under the License.
 
 # Library of functions used by the validate the project
-set -x
 
 # Check if a resource quota is met
 # Globals:
