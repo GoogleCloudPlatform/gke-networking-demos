@@ -222,7 +222,7 @@ function access_service () {
 function backends_exists () {
   local PROJECT="${1}"
   local NAME="${2}"
-  local RETRY_COUNT="20"
+  local RETRY_COUNT="50"
   local SLEEP="10"
   local BACKEND
 
