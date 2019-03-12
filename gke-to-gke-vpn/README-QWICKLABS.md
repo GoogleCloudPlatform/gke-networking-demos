@@ -13,13 +13,6 @@
       * [Kubernetes Engine Cluster 4](#kubernetes-engine-cluster-4)
       * [Other Resources](#other-resources-1)
    * [Notes](#notes)
-* [Prerequisites](#prerequisites)
-   * [Initialize Gcloud](#initialize-gcloud)
-   * [Supported Operating Systems](#supported-operating-systems)
-   * [Tools](#tools)
-   * [Versions](#versions)
-   * [Setup](#setup)
-   * [Directory Structure](#directory-structure)
 * [Deployment Steps](#deployment-steps)
 * [Validation](#validation)
 * [Verify the pod-to-service communication](#verify-the-pod-to-service-communication)
@@ -108,56 +101,6 @@ those clusters.
 1. Region for subnets and Node CIDR can be customized in /network/network.yaml.
 1. Cluster attributes like zone, image, node count, cluster CIDR and service CIDR can be customized in clusters/cluster.yaml.
 1. To add additional custom attributes to network or clusters yaml files and deployment manager scripts at /network/*.py or clusters/*.py needs to be updated accordingly.
-
-## Prerequisites
-
-A Google Cloud account and project is required for this. The default quotas for project
-some resources will most likely need to be increased. The Setup section below covers
-increasing the quotas.
-
-Access to an existing Google Cloud project with the Kubernetes Engine service enabled
-If you do not have a Google Cloud account please signup for a free trial
-[here](https://cloud.google.com).
-
-### Initialize Gcloud
-
-Execute the following command in order to setup gcloud cli.
-
-```console
-gcloud init
-```
-
-### Supported Operating Systems
-
-This project will run on macOS, or in a [Google Cloud Shell](https://cloud.google.com/shell/docs/).
-
-### Tools
-
-When not using Cloud Shell, the following tools are required.
-
-1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )
-2. bash
-3. kubectl - ( >= v1.10.0-gke.0 )
-
-### Versions
-1. Kubernetes Engine >= 1.10.0-gke.0
-
-### Setup
-1. Increase quotas from below resources. Refer to https://cloud.google.com/compute/quotas.
-	* Forwarding rules (minimun 24)
-	* In-use IP addresses global (minimun 20)
-	* Backend services (minimun 4)
-	* Firewall rules (minimun 42)
-
-1. Pull the code from git repo.
-1. Optionally, customize the configuration in .yaml files under /network/ or /clusters/ or /manifests/, if needed.
-
-### Directory Structure
-1. The root folder is the "gke-networking-demos" folder.
-1. The "network" folder contains the manifest files and Deployment Manager templates to setup networks.
-1. The "clusters" folder contains the manifest files and Deployment Manager templates to create Kubernetes Engine clusters.
-1. The "manifests" folder contains the manifest files to create Kubernetes Engine services.
-1. The "gke-to-gke-peering" folder contains scripts specific to this demo.
 
 ## Deployment Steps
 
