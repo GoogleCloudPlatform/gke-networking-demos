@@ -57,7 +57,7 @@ IP, nodeport, internal load balancer, Network Load Balancer and Ingress.
 
 ## Architecture
 
-The execution of this code in the GCP environment creates two custom GCP networks connected via VPC peering. Each network will have two subnets one in the us-west1 region and the other in the us-east1 region. Each of the subnets hosts a Kubernetes Engine cluster which has nginx pods and services to expose those pods across other clusters.
+The execution of this code in the GCP environment creates two custom GCP networks connected via VPC peering. Each network will have two subnets one in the us-west1 region and the other in the us-central1 region. Each of the subnets hosts a Kubernetes Engine cluster which has nginx pods and services to expose those pods across other clusters.
 
 ![Kubernetes Engine Communication Through VPC Peering](gke-to-gke-peering-architecture.png "Kubernetes Engine-Communication-Through-VPC-Peering")
 
@@ -73,11 +73,11 @@ Below is the detailed overview of GCP resources which will be created.
 |10.108.0.0/19|10.208.0.0/20|us-west1-b|3|COS
 
 #### Kubernetes Engine Cluster 2
-1. Subnet: subnet1-us-east1 (10.2.0.0/28)
+1. Subnet: subnet1-us-central1 (10.2.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
 |---|---|---|---|---|
-|10.118.0.0/19|10.218.0.0/20|us-east1-b|3|COS
+|10.118.0.0/19|10.218.0.0/20|us-central1-b|3|COS
 
 #### Other Resources
 1. Cluster IP, Nodeport, ILB, LB and Ingress services to expose pods in each of
@@ -93,11 +93,11 @@ those clusters.
 |10.128.0.0/19|10.228.0.0/20|us-west1-c|3|COS
 
 #### Kubernetes Engine Cluster 4
-1. Subnet: subnet4-us-east1 (10.12.0.0/28)
+1. Subnet: subnet4-us-central1 (10.12.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
 |---|---|---|---|---|
-|10.138.0.0/19|10.238.0.0/20|us-east1-c|3|COS
+|10.138.0.0/19|10.238.0.0/20|us-central1-c|3|COS
 
 #### Other Resources
 1. Cluster IP, Nodeport, ILB, LB and Ingress services to expose pods in each of
@@ -140,11 +140,11 @@ When not using Cloud Shell, the following tools are required.
 
 1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )
 2. bash
-3. kubectl - ( >= v1.10.0-gke.0 )
+3. kubectl - ( >= v1.11.0-gke.0 )
 4. jq
 
 ### Versions
-1. Kubernetes Engine >= 1.10.0-gke.0
+1. Kubernetes Engine >= 1.11.0-gke.0
 
 ### Setup
 
@@ -168,7 +168,7 @@ The following steps will allow a user to
 ## Validation
 1. Make sure that there are no errors in the install script execution.
 1. Login to GCP console.
-1. Verify that the CIDR ranges of subnet-us-west1 and subnet-us-east1 matches
+1. Verify that the CIDR ranges of subnet-us-west1 and subnet-us-central1 matches
 the specification.
 1. Click on the VM instances in the Compute Engine and verify that the node IP addresses
 are drawn from the subnet's CIDR.

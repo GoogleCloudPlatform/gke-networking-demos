@@ -15,4 +15,4 @@
 *.un~
 Session.vim
 .netrwhist
-
+*.code-workspace
