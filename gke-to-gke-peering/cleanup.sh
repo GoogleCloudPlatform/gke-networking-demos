@@ -89,21 +89,25 @@ fi
 
 ### Delete clusters
 if deployment_exists "${PROJECT_ID}" "cluster-deployment"; then
+  sleep 60
   gcloud deployment-manager deployments delete cluster-deployment --quiet
 fi
 
 ### Delete VPC peering connections
 if network_peering_exists "${PROJECT_ID}" "network1"; then
+  sleep 60
   gcloud compute networks peerings delete peer-network1-to-network2 \
     --network network1 --quiet
 fi
 
 if network_peering_exists "${PROJECT_ID}" "network2"; then
+  sleep 60
   gcloud compute networks peerings delete peer-network2-to-network1 \
     --network network2 --quiet
 fi
 
 ### Delete network
 if deployment_exists "${PROJECT_ID}" "network-deployment"; then
+  sleep 60
   gcloud deployment-manager deployments delete network-deployment --quiet
 fi
