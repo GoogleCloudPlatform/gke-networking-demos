@@ -28,7 +28,7 @@ resources:
 - type: compute.v1.address
   name: vpn2-ip-address
   properties:
-    region: us-east1
+    region: us-central1
 
 - type: compute.v1.address
   name: vpn3-ip-address
@@ -38,4 +38,4 @@ resources:
 - type: compute.v1.address
   name: vpn4-ip-address
   properties:
-    region: us-east1
+    region: us-central1

@@ -48,7 +48,7 @@ fi
 ### Delete cluster2 services
 if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster2"; then
   gcloud container clusters get-credentials cluster-deployment-cluster2 \
-    --zone us-east1-b
+    --zone us-central1-b
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
   kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
   kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
@@ -72,7 +72,7 @@ fi
 ### Delete cluster4 services
 if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster4"; then
   gcloud container clusters get-credentials cluster-deployment-cluster4 \
-    --zone us-east1-c
+    --zone us-central1-c
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
   kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
   kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
@@ -93,17 +93,32 @@ if deployment_exists "${PROJECT_ID}" "cluster-deployment"; then
 fi
 
 ### Delete VPN connections
-for (( c=1; c<=4; c++ ))
-do
-  if deployment_exists "${PROJECT_ID}" "vpn$c-deployment"; then
-    gcloud deployment-manager deployments delete "vpn$c-deployment" --quiet
+timeout=100
+vpn_exists=0
+
+while [ $timeout -gt 0 ]; do
+  for (( c=1; c<=4; c++ ))
+  do
+    if deployment_exists "${PROJECT_ID}" "vpn$c-deployment"; then
+      vpn_exists=$((vpn_exists+1))
+      gcloud deployment-manager deployments delete "vpn$c-deployment" --quiet
+    fi
+  done
+  if [[ "$vpn_exists" == "0" ]]; then
+    break
   fi
+  sleep 20
+  timeout=$((timeout - 20))
 done
+
+echo "All VPN's have been deleted"
 
 ### Delete static ips
 if deployment_exists "${PROJECT_ID}" "static-ip-deployment"; then
   gcloud deployment-manager deployments delete static-ip-deployment --quiet
 fi
+
+sleep 30
 
 ### Delete network
 if deployment_exists "${PROJECT_ID}" "network-deployment"; then
