@@ -88,39 +88,27 @@ if backends_exists "${PROJECT_ID}" "k8s-ig"; then
 fi
 
 ### Delete clusters
-if deployment_exists "${PROJECT_ID}" "cluster-deployment"; then
-  gcloud deployment-manager deployments delete cluster-deployment --quiet
+deployment_exists "${PROJECT_ID}" "cluster-deployment"
+if [ $? -ne 2 ]; then
+  deployment_deletes "${PROJECT_ID}" "cluster-deployment"
 fi
 
 ### Delete VPN connections
-timeout=100
-vpn_exists=0
-
-while [ $timeout -gt 0 ]; do
-  for (( c=1; c<=4; c++ ))
-  do
-    if deployment_exists "${PROJECT_ID}" "vpn$c-deployment"; then
-      vpn_exists=$((vpn_exists+1))
-      gcloud deployment-manager deployments delete "vpn$c-deployment" --quiet
-    fi
-  done
-  if [[ "$vpn_exists" == "0" ]]; then
-    break
+for (( c=1; c<=4; c++ ))
+do
+  deployment_exists "${PROJECT_ID}" "vpn$c-deployment"
+  if [ $? -ne 2 ]; then
+    deployment_deletes "${PROJECT_ID}" "vpn$c-deployment"
   fi
-  sleep 20
-  timeout=$((timeout - 20))
 done
 
-echo "All VPN's have been deleted"
-
-### Delete static ips
-if deployment_exists "${PROJECT_ID}" "static-ip-deployment"; then
-  gcloud deployment-manager deployments delete static-ip-deployment --quiet
+# ### Delete static ips
+deployment_exists "${PROJECT_ID}" "static-ip-deployment"
+if [ $? -ne 2 ]; then
+  deployment_deletes "${PROJECT_ID}" "static-ip-deployment"
 fi
 
-sleep 30
-
-### Delete network
-if deployment_exists "${PROJECT_ID}" "network-deployment"; then
-  gcloud deployment-manager deployments delete network-deployment --quiet
+deployment_exists "${PROJECT_ID}" "network-deployment"
+if [ $? -ne 2 ]; then
+  deployment_deletes "${PROJECT_ID}" "network-deployment"
 fi

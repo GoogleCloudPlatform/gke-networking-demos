@@ -88,26 +88,22 @@ if backends_exists "${PROJECT_ID}" "k8s-ig"; then
 fi
 
 ### Delete clusters
-if deployment_exists "${PROJECT_ID}" "cluster-deployment"; then
-  sleep 60
-  gcloud deployment-manager deployments delete cluster-deployment --quiet
+deployment_exists "${PROJECT_ID}" "cluster-deployment"
+if [ $? -ne 2 ]; then
+  deployment_deletes "${PROJECT_ID}" "cluster-deployment"
 fi
 
 ### Delete VPC peering connections
 if network_peering_exists "${PROJECT_ID}" "network1"; then
-  sleep 60
-  gcloud compute networks peerings delete peer-network1-to-network2 \
-    --network network1 --quiet
+  network_peering_deletes "${PROJECT_ID}"  "network1" "peer-network1-to-network2"
 fi
 
 if network_peering_exists "${PROJECT_ID}" "network2"; then
-  sleep 60
-  gcloud compute networks peerings delete peer-network2-to-network1 \
-    --network network2 --quiet
+  network_peering_deletes "${PROJECT_ID}"  "network2" "peer-network2-to-network1"
 fi
 
 ### Delete network
-if deployment_exists "${PROJECT_ID}" "network-deployment"; then
-  sleep 60
-  gcloud deployment-manager deployments delete network-deployment --quiet
+deployment_exists "${PROJECT_ID}" "network-deployment"
+if [ $? -ne 2 ]; then
+  deployment_deletes "${PROJECT_ID}" "network-deployment"
 fi

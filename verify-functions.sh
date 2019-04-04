@@ -49,6 +49,9 @@ function meets_quota() {
 #   DEPLOY
 # Returns:
 #   status code
+#     0:   the deployment should exist, except that it does not
+#     1:   the deployment exists
+#     2:   no trace of the deployment left, it can be an indicator of successful clean up earlier
 function deployment_exists() {
   local PROJECT="${1}"
   local DEPLOY="${2}"
@@ -56,13 +59,51 @@ function deployment_exists() {
   EXISTS=$(gcloud deployment-manager deployments list --project "${PROJECT}" \
     --filter="name=${DEPLOY} AND operation.status=DONE" --format "value(operation.error.errors)")
   if [[ "${EXISTS}" != "" ]]; then
-    echo "${DEPLOY} deployment exists"
     if [[ "${EXISTS}" != "[]" ]]; then
       echo "ERROR ${DEPLOY}: ${EXISTS}"
+      return 0
     fi
-    return 0
+  else  ##  EXISTS = ""  the resource cannot be found at all
+    return 2
   fi
+  # default exit code, where the resource can be found and there are no operation.error.errors
   return 1
+}
+
+# Delete a deployment, including retry logic where necessary
+# Globals:
+#   None
+# Arguments:
+#   PROJECT
+#   DEPLOY
+#   RETRY  - number of retrys, default to 3
+# Returns:
+#   status code
+function deployment_deletes() {
+  local PROJECT="${1:-}"
+  local DEPLOY="${2:-}"
+  local RETRY="${3:-3}"
+
+  while [ ${RETRY} -gt 0 ]; do
+    echo "Trying to delete ${DEPLOY}"
+    gcloud deployment-manager deployments delete "${DEPLOY}" --quiet --project "${PROJECT}"
+    deployment_exists "${PROJECT}" "${DEPLOY}"
+    if [[ "$?" != "2" ]]; then
+      echo "failed deleting ${DEPLOY}.  Retrying ..."
+      sleep 20
+      RETRY=$((RETRY-1))
+    else
+      break
+    fi
+  done
+
+  # Fail the deletion if there are still traces of deployment left after multiple attempts of deletion
+  deployment_exists "${PROJECT}" "${DEPLOY}"
+  if [[ "$?" != "2" ]]; then
+    return 1
+  fi
+
+  return 0
 }
 
 # Check if a given network exists
@@ -115,6 +156,8 @@ function vpn_exists() {
 #   NETWORK
 # Returns:
 #   status code
+#     0:   the network peering exists
+#     1:   the network peering does not exist
 function network_peering_exists() {
   local PROJECT="${1}"
   local NETWORK="${2}"
@@ -127,6 +170,43 @@ function network_peering_exists() {
   fi
   return 1
 }
+
+# Delete a network peering, including retry logic where necessary
+# Globals:
+#   None
+# Arguments:
+#   PROJECT
+#   NETWORK
+#   PEERING
+#   RETRY  - number of retrys, default to 3
+# Returns:
+#   status code
+function network_peering_deletes() {
+  local PROJECT="${1:-}"
+  local NETWORK="${2:-}"
+  local PEERING="${3:-}"
+  local RETRY="${4:-3}"
+
+  while [ ${RETRY} -gt 0 ]; do
+    gcloud compute networks peerings delete "${PEERING}" --network "${NETWORK}" --project "${PROJECT}" --quiet
+    network_peering_exists "${PROJECT}" "${NETWORK}"
+    if [[ "$?" != "1" ]]; then
+      sleep 10
+      RETRY=$((RETRY-1))
+    else
+      break
+    fi
+  done
+
+  # Fail the deletion if there are still traces of deployment left after multiple attempts of deletion
+  network_peering_exists "${PROJECT}" "${NETWORK}"
+  if [[ "$?" != "0" ]]; then
+    return 1
+  fi
+
+  return 0
+}
+
 
 # Verify cidr range
 # Globals:
