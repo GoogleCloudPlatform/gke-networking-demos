@@ -32,7 +32,7 @@ required:
 properties:
   region:
     type: string
-    default: us-east1
+    default: us-central1
     description: Region in which to create all resources
 
   ikeVersion:

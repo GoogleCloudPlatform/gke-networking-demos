@@ -55,7 +55,7 @@ IP, nodeport, internal load balancer, Network Load Balancer and Ingress.
 
 ## Architecture
 
-The execution of this demo in the GCP environment creates two custom GCP networks. Each network will have two subnets one in the us-west1 region and the other in the us-east1 region. Each of the subnets hosts a Kubernetes Engine cluster which has nginx pods and services to expose those pods across other clusters. Both networks are connected using VPN. Kubernetes Engine internal load balancers are regional services. VPN gateway per region is needed to reach ILB services in that region. Hence four VPN gateways are created in both projects. Please refer to https://cloud.google.com/compute/docs/load-balancing/internal/#global_routing_issueVPN for more details.
+The execution of this demo in the GCP environment creates two custom GCP networks. Each network will have two subnets one in the us-west1 region and the other in the us-central1 region. Each of the subnets hosts a Kubernetes Engine cluster which has nginx pods and services to expose those pods across other clusters. Both networks are connected using VPN. Kubernetes Engine internal load balancers are regional services. VPN gateway per region is needed to reach ILB services in that region. Hence four VPN gateways are created in both projects. Please refer to https://cloud.google.com/compute/docs/load-balancing/internal/#global_routing_issueVPN for more details.
 
 In this project, we are using route-based VPN over policy-based VPN to establish pod-to-service communication. In the VPN tunnel configuration, node CIDR, pod CIDR and service CIDR's from peer remote network need to be added so that nodes, pods and services can reach exposed services from other clusters.
 
@@ -72,11 +72,11 @@ Below is the detailed overview of GCP resources which will be created.
 |10.108.0.0/19|10.208.0.0/20|us-west1-b|3|COS
 
 #### Kubernetes Engine Cluster 2
-1. Subnet: subnet1-us-east1 (10.2.0.0/28)
+1. Subnet: subnet1-us-central1 (10.2.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
 |---|---|---|---|---|
-|10.118.0.0/19|10.218.0.0/20|us-east1-b|3|COS
+|10.118.0.0/19|10.218.0.0/20|us-central1-b|3|COS
 
 #### Other Resources
 1. Cluster IP, Nodeport, ILB, LB and Ingress services to expose pods in each of
@@ -86,14 +86,14 @@ those clusters.
 |Gateway name|Google IP address|Network|Region|Tunnels
 |---|---|---|---|---|
 |vpn1-deployment-gateway|x.x.x.x|network1|us-west1|vpn1-deployment-tunnel|
-|vpn2-deployment-gateway|x.x.x.x|network1|us-east1|vpn2-deployment-tunnel|
+|vpn2-deployment-gateway|x.x.x.x|network1|us-central1|vpn2-deployment-tunnel|
 
 1. VPN Tunnels
 
 |Tunnel name|Status|Google gateway|Google IP address|Google network|Region|Peer IP address|Routing type
 |---|---|---|---|---|---|---|---|
 |vpn1-deployment-tunnel|Established|vpn1-deployment-gateway|x.x.x.x|network1|us-west1|vpn3-static-ip|Route-based|
-|vpn2-deployment-tunnel|Established|vpn2-deployment-gateway|x.x.x.x|network1|us-east1|vpn4-static-ip|Route-based|
+|vpn2-deployment-tunnel|Established|vpn2-deployment-gateway|x.x.x.x|network1|us-central1|vpn4-static-ip|Route-based|
 
 ### GCP Network 2
 #### Kubernetes Engine Cluster 3
@@ -105,11 +105,11 @@ those clusters.
 |10.128.0.0/19|10.228.0.0/20|us-west1-c|3|COS|
 
 #### Kubernetes Engine Cluster 4
-1. Subnet: subnet4-us-east1 (10.12.0.0/28)
+1. Subnet: subnet4-us-central1 (10.12.0.0/28)
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
 |---|---|---|---|---|
-|10.138.0.0/19|10.238.0.0/20|us-east1-c|3|COS|
+|10.138.0.0/19|10.238.0.0/20|us-central1-c|3|COS|
 
 #### Other Resources
 1. Cluster IP, Nodeport, ILB, LB and Ingress services to expose pods in each of
@@ -119,14 +119,14 @@ those clusters.
 |Gateway name|Google IP address|Network|Region|Tunnels|
 |---|---|---|---|---|
 |vpn3-deployment-gateway|x.x.x.x|network2|us-west1|vpn3-deployment-tunnel|
-|vpn4-deployment-gateway|x.x.x.x|network2|us-east1|vpn4-deployment-tunnel|
+|vpn4-deployment-gateway|x.x.x.x|network2|us-central1|vpn4-deployment-tunnel|
 
 1. VPN Tunnels
 
 |Tunnel name|Status|Google gateway|Google IP address|Google network|Region|Peer IP address|Routing type|
 |---|---|---|---|---|---|---|---|
 |vpn3-deployment-tunnel|Established|vpn3-deployment-gateway|x.x.x.x|network2|us-west1|vpn1-static-ip|Route-based|
-|vpn4-deployment-tunnel|Established|vpn4-deployment-gateway|x.x.x.x|network2|us-east1|vpn2-static-ip|Route-based|
+|vpn4-deployment-tunnel|Established|vpn4-deployment-gateway|x.x.x.x|network2|us-central1|vpn2-static-ip|Route-based|
 
 ### Notes
 1. Region for subnets and Node CIDR can be customized in /network/network.yaml.
@@ -193,7 +193,7 @@ The following steps will allow a user to run this demo.
 1. Login to GCP console.
 1. Use the navigation menu, accessible at the top-left of the console, to select services in the following steps.
 ![Navigation Menu](../images/nav_menu_demo.png)
-1. Select "VPC networks" and confirm that CIDR ranges of subnet1-us-west1 is 10.1.0.0/28 and subnet2-us-east1 is 10.2.0.0/28
+1. Select "VPC networks" and confirm that CIDR ranges of subnet1-us-west1 is 10.1.0.0/28 and subnet2-us-central1 is 10.2.0.0/28
 the specification.
 ![VPC Networks](../images/vpc_networks.png)
 1. Select "Compute Engine"-> VM instances and see that the cluster VM instances are are drawn from the subnet's CIDR ranges.
