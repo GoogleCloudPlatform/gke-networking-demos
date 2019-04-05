@@ -89,6 +89,7 @@ fi
 
 ### Delete clusters
 deployment_exists "${PROJECT_ID}" "cluster-deployment"
+## deployment_exists with output 2 = there are no traces of the specific deployment in the deployment manager, hence no need to attempt deletion
 if [ $? -ne 2 ]; then
   deployment_deletes "${PROJECT_ID}" "cluster-deployment"
 fi
@@ -102,12 +103,13 @@ do
   fi
 done
 
-# ### Delete static ips
+### Delete static ips
 deployment_exists "${PROJECT_ID}" "static-ip-deployment"
 if [ $? -ne 2 ]; then
   deployment_deletes "${PROJECT_ID}" "static-ip-deployment"
 fi
 
+### Delete the network
 deployment_exists "${PROJECT_ID}" "network-deployment"
 if [ $? -ne 2 ]; then
   deployment_deletes "${PROJECT_ID}" "network-deployment"

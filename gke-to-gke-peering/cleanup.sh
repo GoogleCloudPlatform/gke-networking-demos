@@ -89,6 +89,7 @@ fi
 
 ### Delete clusters
 deployment_exists "${PROJECT_ID}" "cluster-deployment"
+## deployment_exists with output 2 = there are no traces of the specific deployment in the deployment manager, hence no need to attempt deletion
 if [ $? -ne 2 ]; then
   deployment_deletes "${PROJECT_ID}" "cluster-deployment"
 fi
