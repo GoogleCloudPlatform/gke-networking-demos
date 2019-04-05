@@ -48,7 +48,7 @@ fi
 ### Delete cluster2 services
 if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster2"; then
   gcloud container clusters get-credentials cluster-deployment-cluster2 \
-    --zone us-east1-b
+    --zone us-central1-b
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
   kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
   kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
@@ -72,7 +72,7 @@ fi
 ### Delete cluster4 services
 if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster4"; then
   gcloud container clusters get-credentials cluster-deployment-cluster4 \
-    --zone us-east1-c
+    --zone us-central1-c
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
   kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
   kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
@@ -88,24 +88,29 @@ if backends_exists "${PROJECT_ID}" "k8s-ig"; then
 fi
 
 ### Delete clusters
-if deployment_exists "${PROJECT_ID}" "cluster-deployment"; then
-  gcloud deployment-manager deployments delete cluster-deployment --quiet
+deployment_exists "${PROJECT_ID}" "cluster-deployment"
+## deployment_exists with output 2 = there are no traces of the specific deployment in the deployment manager, hence no need to attempt deletion
+if [ $? -ne 2 ]; then
+  deployment_deletes "${PROJECT_ID}" "cluster-deployment"
 fi
 
 ### Delete VPN connections
 for (( c=1; c<=4; c++ ))
 do
-  if deployment_exists "${PROJECT_ID}" "vpn$c-deployment"; then
-    gcloud deployment-manager deployments delete "vpn$c-deployment" --quiet
+  deployment_exists "${PROJECT_ID}" "vpn$c-deployment"
+  if [ $? -ne 2 ]; then
+    deployment_deletes "${PROJECT_ID}" "vpn$c-deployment"
   fi
 done
 
 ### Delete static ips
-if deployment_exists "${PROJECT_ID}" "static-ip-deployment"; then
-  gcloud deployment-manager deployments delete static-ip-deployment --quiet
+deployment_exists "${PROJECT_ID}" "static-ip-deployment"
+if [ $? -ne 2 ]; then
+  deployment_deletes "${PROJECT_ID}" "static-ip-deployment"
 fi
 
-### Delete network
-if deployment_exists "${PROJECT_ID}" "network-deployment"; then
-  gcloud deployment-manager deployments delete network-deployment --quiet
+### Delete the network
+deployment_exists "${PROJECT_ID}" "network-deployment"
+if [ $? -ne 2 ]; then
+  deployment_deletes "${PROJECT_ID}" "network-deployment"
 fi
