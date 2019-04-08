@@ -36,8 +36,8 @@ resources:
   type: cluster.py
   properties:
     network: network1
-    subnet: subnet2-us-central1
-    zone: us-central1-b
+    subnet: subnet2-us-east1
+    zone: us-east1-b
     cluster-version: "1.12"
     initialNodeCount: 1
     image-type: cos
@@ -64,8 +64,8 @@ resources:
   type: cluster.py
   properties:
     network: network2
-    subnet: subnet4-us-central1
-    zone: us-central1-c
+    subnet: subnet4-us-east1
+    zone: us-east1-c
     cluster-version: "1.12"
     initialNodeCount: 1
     image-type: cos
