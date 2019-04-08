@@ -36,7 +36,7 @@ fi
 ### Delete cluster1 services
 if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster1"; then
   gcloud container clusters get-credentials cluster-deployment-cluster1 \
-    --zone us-west1-b
+    --zone us-east1-d
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
   kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
   kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
@@ -48,7 +48,7 @@ fi
 ### Delete cluster2 services
 if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster2"; then
   gcloud container clusters get-credentials cluster-deployment-cluster2 \
-    --zone us-central1-b
+    --zone us-east1-b
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
   kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
   kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
@@ -60,7 +60,7 @@ fi
 ### Delete cluster3 services
 if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster3"; then
   gcloud container clusters get-credentials cluster-deployment-cluster3 \
-    --zone us-west1-c
+    --zone us-east1-c
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
   kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
   kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
@@ -72,7 +72,7 @@ fi
 ### Delete cluster4 services
 if cluster_running "${PROJECT_ID}" "cluster-deployment-cluster4"; then
   gcloud container clusters get-credentials cluster-deployment-cluster4 \
-    --zone us-central1-c
+    --zone us-east1-c
   kubectl config set-context "$(kubectl config current-context)" --namespace=default
   kubectl delete -f "${ROOT}"/manifests/lb-svc.yaml --cascade --grace-period 10
   kubectl delete -f "${ROOT}"/manifests/nodeport-svc.yaml
