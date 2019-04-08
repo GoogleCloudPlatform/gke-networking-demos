@@ -24,10 +24,10 @@ resources:
   properties:
     subnetworks:
       - name: subnet1
-        region: us-west1
+        region: us-east1
         cidr: 10.1.0.0/28
       - name: subnet2
-        region: us-central1
+        region: us-east1
         cidr: 10.2.0.0/28
 
 # The "name" property below will be the name of the new network
@@ -36,8 +36,9 @@ resources:
   properties:
     subnetworks:
       - name: subnet3
-        region: us-west1
+        region: us-east1
         cidr: 10.11.0.0/28
       - name: subnet4
-        region: us-central1
+        region: us-east1
         cidr: 10.12.0.0/28
+
