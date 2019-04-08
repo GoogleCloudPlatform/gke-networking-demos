@@ -97,12 +97,12 @@ VPN3_IP=$(gcloud compute addresses list --filter="name=vpn3-ip-address" \
 VPN4_IP=$(gcloud compute addresses list --filter="name=vpn4-ip-address" \
   --format "value(address)")
 
-### Create VPN connection for network1 and network2 in us-central1 &
-### us-west1 regions
+### Create VPN connection for network1 and network2 in us-east1 &
+### us-east1 regions
 if ! deployment_exists "${PROJECT_ID}" "vpn1-deployment"; then
   gcloud deployment-manager deployments create vpn1-deployment \
     --template vpn-custom-subnet.jinja \
-    --properties "region:us-west1,network:projects/${PROJECT_ID}/global/networks/network1,\
+    --properties "region:us-east1,network:projects/${PROJECT_ID}/global/networks/network1,\
 vpn-ip:${VPN1_IP},peerIp:${VPN3_IP},sharedSecret:gke-to-gke-vpn,\
 nodeCIDR:10.11.0.0/28,clusterCIDR:10.128.0.0/19,serviceCIDR:10.228.0.0/20"
 fi
@@ -110,7 +110,7 @@ fi
 if ! deployment_exists "${PROJECT_ID}" "vpn2-deployment"; then
   gcloud deployment-manager deployments create vpn2-deployment \
     --template vpn-custom-subnet.jinja \
-    --properties "region:us-central1,network:projects/${PROJECT_ID}/global/networks/network1,\
+    --properties "region:us-east1,network:projects/${PROJECT_ID}/global/networks/network1,\
 vpn-ip:${VPN2_IP},peerIp:${VPN4_IP},sharedSecret:gke-to-gke-vpn,\
 nodeCIDR:10.12.0.0/28,clusterCIDR:10.138.0.0/19,serviceCIDR:10.238.0.0/20"
 fi
@@ -118,7 +118,7 @@ fi
 if ! deployment_exists "${PROJECT_ID}" "vpn3-deployment"; then
   gcloud deployment-manager deployments create vpn3-deployment \
     --template vpn-custom-subnet.jinja \
-    --properties "region:us-west1,network:projects/${PROJECT_ID}/global/networks/network2,\
+    --properties "region:us-east1,network:projects/${PROJECT_ID}/global/networks/network2,\
 vpn-ip:${VPN3_IP},peerIp:${VPN1_IP},sharedSecret:gke-to-gke-vpn,\
 nodeCIDR:10.1.0.0/28,clusterCIDR:10.108.0.0/19,serviceCIDR:10.208.0.0/20"
 fi
@@ -126,14 +126,14 @@ fi
 if ! deployment_exists "${PROJECT_ID}" "vpn4-deployment"; then
   gcloud deployment-manager deployments create vpn4-deployment \
    --template vpn-custom-subnet.jinja \
-   --properties "region:us-central1,network:projects/${PROJECT_ID}/global/networks/network2,\
+   --properties "region:us-east1,network:projects/${PROJECT_ID}/global/networks/network2,\
 vpn-ip:${VPN4_IP},peerIp:${VPN2_IP},sharedSecret:gke-to-gke-vpn,\
 nodeCIDR:10.2.0.0/28,clusterCIDR:10.118.0.0/19,serviceCIDR:10.218.0.0/20"
 fi
 
 ### Fetch cluster1 credentials, deploy nginx pods in cluster1 and create services
 gcloud container clusters get-credentials cluster-deployment-cluster1 \
-  --zone us-west1-b
+  --zone us-east1-b
 kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
 kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
@@ -143,7 +143,7 @@ kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
 
 ### Fetch cluster2 credentials, deploy nginx pods in cluster2 and create services
 gcloud container clusters get-credentials cluster-deployment-cluster2 \
-  --zone us-central1-b
+  --zone us-east1-b
 kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
 kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
@@ -153,7 +153,7 @@ kubectl apply -f "${ROOT}"/manifests/ingress-svc.yaml
 
 ### Fetch cluster3 credentials, deploy nginx pods in cluster3 and create services
 gcloud container clusters get-credentials cluster-deployment-cluster3 \
-  --zone us-west1-c
+  --zone us-east1-c
 kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
 kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
@@ -163,7 +163,7 @@ kubectl apply -f "${ROOT}"/manifests/ilb-svc.yaml
 
 ### Fetch cluster4 credentials, deploy nginx pods in cluster4 and create services
 gcloud container clusters get-credentials cluster-deployment-cluster4 \
-  --zone us-central1-c
+  --zone us-east1-c
 kubectl config set-context "$(kubectl config current-context)" --namespace=default
 kubectl apply -f "${ROOT}"/manifests/run-my-nginx.yaml
 kubectl apply -f "${ROOT}"/manifests/cluster-ip-svc.yaml
