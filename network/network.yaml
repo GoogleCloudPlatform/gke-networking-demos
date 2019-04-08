@@ -24,7 +24,7 @@ resources:
   properties:
     subnetworks:
       - name: subnet1
-        region: us-west1
+        region: us-east1
         cidr: 10.1.0.0/28
       - name: subnet2
         region: us-east1
@@ -36,7 +36,7 @@ resources:
   properties:
     subnetworks:
       - name: subnet3
-        region: us-west1
+        region: us-east1
         cidr: 10.11.0.0/28
       - name: subnet4
         region: us-east1
