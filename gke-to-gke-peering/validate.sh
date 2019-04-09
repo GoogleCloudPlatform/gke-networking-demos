@@ -59,7 +59,7 @@ if ! verify_cidr_range "${PROJECT_ID}" "subnet1-us-east1" "10.1.0.0/28"; then
 fi
 
 ### Ensure that the Subnet range is correct
-if ! verify_cidr_range "${PROJECT_ID}" "subnet2-us-east1" "10.2.0.0/28"; then
+if ! verify_cidr_range "${PROJECT_ID}" "subnet2-us-central1" "10.2.0.0/28"; then
   echo "Subnet ip range is incorrect"
   echo "Terminating..."
   exit 1
@@ -73,7 +73,7 @@ if ! verify_cidr_range "${PROJECT_ID}" "subnet3-us-east1" "10.11.0.0/28"; then
 fi
 
 ### Ensure that the Subnet range is correct
-if ! verify_cidr_range "${PROJECT_ID}" "subnet4-us-east1" "10.12.0.0/28"; then
+if ! verify_cidr_range "${PROJECT_ID}" "subnet4-us-central1" "10.12.0.0/28"; then
   echo "Subnet ip range is incorrect"
   echo "Terminating..."
   exit 1
