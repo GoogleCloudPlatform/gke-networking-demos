@@ -84,7 +84,7 @@ function deployment_deletes() {
   local DEPLOY="${2:-}"
   local RETRY="${3:-3}"
 
-  while [ ${RETRY} -gt 0 ]; do
+  while [ "${RETRY}" -gt 0 ]; do
     echo "Trying to delete ${DEPLOY}"
     gcloud deployment-manager deployments delete "${DEPLOY}" --quiet --project "${PROJECT}"
     deployment_exists "${PROJECT}" "${DEPLOY}"
@@ -187,7 +187,7 @@ function network_peering_deletes() {
   local PEERING="${3:-}"
   local RETRY="${4:-3}"
 
-  while [ ${RETRY} -gt 0 ]; do
+  while [ "${RETRY}" -gt 0 ]; do
     gcloud compute networks peerings delete "${PEERING}" --network "${NETWORK}" --project "${PROJECT}" --quiet
     network_peering_exists "${PROJECT}" "${NETWORK}"
     if [[ "$?" != "1" ]]; then
@@ -199,8 +199,8 @@ function network_peering_deletes() {
   done
 
   # Fail the deletion if there are still traces of deployment left after multiple attempts of deletion
-  network_peering_exists "${PROJECT}" "${NETWORK}"
-  if [[ "$?" != "0" ]]; then
+  if ! network_peering_exists "${PROJECT}" "${NETWORK}"
+  then
     return 1
   fi
 
