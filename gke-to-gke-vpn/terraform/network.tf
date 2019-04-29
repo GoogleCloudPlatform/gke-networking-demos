@@ -79,13 +79,13 @@ resource "google_compute_subnetwork" "subnet4-us-central1" {
 
 // Setting 2 networks
 resource "google_compute_network" "network1" {
-  name                    = "network1"
+  name                    = "${var.vpn-network1}"
   project                 = "${var.project}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "network2" {
-  name                    = "network2"
+  name                    = "${var.vpn-network2}"
   project                 = "${var.project}"
   auto_create_subnetworks = false
 }

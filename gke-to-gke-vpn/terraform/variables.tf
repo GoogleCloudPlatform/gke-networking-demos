@@ -36,10 +36,16 @@ variable "vpn-regions" {
   default = ["us-east1", "us-central1", "us-east1", "us-central1"]
 }
 
-variable "vpn-networks" {
-  description = "Name of all VPN Networks"
-  type = "list"
-  default = ["network1", "network2", "network1", "network2"]
+variable "vpn-network1" {
+  description = "Name of VPN Network 1"
+  type = "string"
+  default = "vpnnetwork1"
+}
+
+variable "vpn-network2" {
+  description = "Name of VPN Network 2"
+  type = "string"
+  default = "vpnnetwork2"
 }
 
 // The region in which to deploy first regionally-scoped resources
