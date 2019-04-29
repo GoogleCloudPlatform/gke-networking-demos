@@ -43,14 +43,14 @@ variable "vpn-networks" {
 }
 
 // The region in which to deploy first regionally-scoped resources
-variable "region1 {
+variable "region1" {
   description = "Name of Region1"
   type = "string"
   default = "us-east1"
 }
 
 // The region in which to deploy second regionally-scoped resources
-variable "region2 {
+variable "region2" {
   description = "Name of Region2"
   type = "string"
   default = "us-central1"

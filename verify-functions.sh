@@ -31,7 +31,7 @@ function meets_quota() {
   local QUOTA="$3"
   local LIMIT
   LIMIT=$(gcloud compute project-info describe --project "$PROJECT" \
-    --format=json | jq --arg METRIC "$METRIC" ".quotas[] | select(.metric==$METRIC).limit")
+    --format=json | jq --arg METRIC "$METRIC" '.quotas[] | select(.metric==$METRIC).limit')
   if [[ "${LIMIT}" -ge "$QUOTA" ]]; then
     return 0
   fi
