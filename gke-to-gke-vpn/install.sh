@@ -68,7 +68,7 @@ fi
 
 ### enable required service apis in the project
 gcloud services enable \
-  compute.googleapis.com 
+  compute.googleapis.com
 
 (cd "$ROOT/gke-to-gke-vpn/terraform"; terraform init -input=false)
 (cd "$ROOT/gke-to-gke-vpn/terraform"; terraform apply -input=false -auto-approve)

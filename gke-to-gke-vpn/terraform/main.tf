@@ -24,6 +24,7 @@ data "google_container_engine_versions" "gke_version" {
   project  = "${var.project}"
 }
 
+// Install the first cluster
 resource "google_container_cluster" "cluster-deployment-cluster1" {
   name               = "cluster-deployment-cluster1"
   project            = "${var.project}"
@@ -40,6 +41,7 @@ resource "google_container_cluster" "cluster-deployment-cluster1" {
   }
 }
 
+// Install node-pool for the first cluster. It's recommended by Terraform to be in a seperate block than main cluster
 resource "google_container_node_pool" "cluster1_nodes" {
     name       = "cluster1-nodes"
     location   = "${var.cluster1-location}"
@@ -57,6 +59,7 @@ resource "google_container_node_pool" "cluster1_nodes" {
     }
 }
 
+// Install the second cluster
 resource "google_container_cluster" "cluster-deployment-cluster2" {
   name               = "cluster-deployment-cluster2"
   project            = "${var.project}"
@@ -73,6 +76,7 @@ resource "google_container_cluster" "cluster-deployment-cluster2" {
   }
 }
 
+// Install node-pool for the second cluster.
 resource "google_container_node_pool" "cluster2_nodes" {
     name       = "cluster2-nodes"
     location   = "${var.cluster2-location}"
@@ -89,6 +93,8 @@ resource "google_container_node_pool" "cluster2_nodes" {
       tags = ["kc-node"]
     }
 }
+
+// Install the third cluster
 resource "google_container_cluster" "cluster-deployment-cluster3" {
   name               = "cluster-deployment-cluster3"
   project            = "${var.project}"
@@ -105,6 +111,7 @@ resource "google_container_cluster" "cluster-deployment-cluster3" {
   }
 }
 
+// Install node-pool for the third cluster.
 resource "google_container_node_pool" "cluster3_nodes" {
     name       = "cluster3-nodes"
     location   = "${var.cluster3-location}"
@@ -121,6 +128,8 @@ resource "google_container_node_pool" "cluster3_nodes" {
       tags = ["kc-node"]
     }
 }
+
+// Install the forth cluster
 resource "google_container_cluster" "cluster-deployment-cluster4" {
   name               = "cluster-deployment-cluster4"
   project            = "${var.project}"
@@ -137,6 +146,7 @@ resource "google_container_cluster" "cluster-deployment-cluster4" {
   }
 }
 
+// Install node-pool for the forth cluster.
 resource "google_container_node_pool" "cluster4_nodes" {
     name       = "cluster4-nodes"
     location   = "${var.cluster4-location}"

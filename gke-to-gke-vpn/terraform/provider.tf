@@ -16,5 +16,5 @@ limitations under the License.
 
 provider "google" {
   version = "2.4.0"
-  region  = "${var.region}"
+  region  = "${var.region1}"
 }

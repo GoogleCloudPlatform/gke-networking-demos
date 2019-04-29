@@ -22,7 +22,6 @@ See https://www.terraform.io/docs/configuration/variables.html
 variable "project" {
   description = "The project in which to hold the components"
   type        = "string"
-#  default     = "homer-proj"
 }
 
 variable "vpn-deployments" {
@@ -43,11 +42,18 @@ variable "vpn-networks" {
   default = ["network1", "network2", "network1", "network2"]
 }
 
-// The region in which to deploy all regionally-scoped resources
-variable "region" {
-  description = "Name of Region"
+// The region in which to deploy first regionally-scoped resources
+variable "region1 {
+  description = "Name of Region1"
   type = "string"
   default = "us-east1"
+}
+
+// The region in which to deploy second regionally-scoped resources
+variable "region2 {
+  description = "Name of Region2"
+  type = "string"
+  default = "us-central1"
 }
 
 // Cluster variables

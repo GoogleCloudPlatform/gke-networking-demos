@@ -19,36 +19,38 @@ This will setup basic underlying network vpn.tf
 It will setup Networks, IPs and Subnetworks
 */
 
+// Setting up Static IP Addresses
 resource "google_compute_address" "vpn1-ip-address" {
   name    = "vpn1-ip-address"
   project = "${var.project}"
-  region  = "us-east1"
+  region  = "${var.region1}"
 }
 
 resource "google_compute_address" "vpn2-ip-address" {
   name    = "vpn2-ip-address"
   project = "${var.project}"
-  region  = "us-central1"
+  region  = "${var.region2}"
 }
 
 resource "google_compute_address" "vpn3-ip-address" {
   name    = "vpn3-ip-address"
   project = "${var.project}"
-  region  = "us-east1"
+  region  = "${var.region1}"
 }
 
 resource "google_compute_address" "vpn4-ip-address" {
   name    = "vpn4-ip-address"
   project = "${var.project}"
-  region  = "us-central1"
+  region  = "${var.region2}"
 }
 
+// Setting up 4 subnets for our 2 networks
 resource "google_compute_subnetwork" "subnet1-us-east1" {
   name          = "subnet1-us-east1"
   project       = "${var.project}"
   ip_cidr_range = "${var.node1-cidr}"
   network       = "${google_compute_network.network1.self_link}"
-  region        = "us-east1"
+  region        = "${var.region1}"
 }
 
 resource "google_compute_subnetwork" "subnet2-us-central1" {
@@ -56,7 +58,7 @@ resource "google_compute_subnetwork" "subnet2-us-central1" {
   project       = "${var.project}"
   ip_cidr_range = "${var.node2-cidr}"
   network       = "${google_compute_network.network1.self_link}"
-  region        = "us-central1"
+  region        = "${var.region2}"
 }
 
 resource "google_compute_subnetwork" "subnet3-us-east1" {
@@ -64,7 +66,7 @@ resource "google_compute_subnetwork" "subnet3-us-east1" {
   project       = "${var.project}"
   ip_cidr_range = "${var.node3-cidr}"
   network       = "${google_compute_network.network2.self_link}"
-  region        = "us-east1"
+  region        = "${var.region1}"
 }
 
 resource "google_compute_subnetwork" "subnet4-us-central1" {
@@ -72,9 +74,10 @@ resource "google_compute_subnetwork" "subnet4-us-central1" {
   project       = "${var.project}"
   ip_cidr_range = "${var.node4-cidr}"
   network       = "${google_compute_network.network2.self_link}"
-  region        = "us-central1"
+  region        = "${var.region2}"
 }
 
+// Setting 2 networks
 resource "google_compute_network" "network1" {
   name                    = "network1"
   project                 = "${var.project}"
