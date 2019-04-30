@@ -39,13 +39,13 @@ variable "vpn-regions" {
 variable "vpn-network1" {
   description = "Name of VPN Network 1"
   type = "string"
-  default = "vpnnetwork1"
+  default = "network1"
 }
 
 variable "vpn-network2" {
   description = "Name of VPN Network 2"
   type = "string"
-  default = "vpnnetwork2"
+  default = "network2"
 }
 
 // The region in which to deploy first regionally-scoped resources
