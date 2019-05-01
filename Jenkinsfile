@@ -76,7 +76,7 @@ spec:
           sh "make lint"
       }
     }
-
+/*
     stage('gke-to-gke-peering-create') {
        container(containerName) {
           // You can use dir to set the working directory
@@ -108,7 +108,7 @@ spec:
             }
           }
       }
-
+*/
     stage('gke-to-gke-vpn-create') {
           container(containerName) {
             dir('gke-to-gke-vpn') {
@@ -137,9 +137,9 @@ spec:
    catch (err) {
       stage('Teardown') {
         container(containerName) {
-          dir('gke-to-gke-peering') {
-            sh './cleanup.sh'
-          }
+//          dir('gke-to-gke-peering') {
+//            sh './cleanup.sh'
+//          }
           dir('gke-to-gke-vpn') {
             sh './cleanup.sh'
           }
@@ -154,9 +154,10 @@ spec:
    finally {
      stage('Teardown') {
         container(containerName) {
-          dir('gke-to-gke-peering') {
-            sh './cleanup.sh'
-          }
+//          dir('gke-to-gke-peering') {
+//
+//            sh './cleanup.sh'
+//          }
           dir('gke-to-gke-vpn') {
             sh './cleanup.sh'
           }
