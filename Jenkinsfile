@@ -99,11 +99,6 @@ spec:
     stage('gke-to-gke-peering-cleanup') {
           container(containerName) {
             dir('gke-to-gke-peering') {
-              /**
-              Cleaning up as part of the regular pipeline since these projects
-              have unusually high resource requirements and we don't want
-              to hit quota
-              **/
               sh './cleanup.sh'
             }
           }
