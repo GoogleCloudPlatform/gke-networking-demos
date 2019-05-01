@@ -83,9 +83,8 @@ fi
 
 ### wait for all service related backends to get deleted.
 ### Otherwise, deletion of network deployments fails with dependent resources.
-#if backends_exists "${PROJECT_ID}" "k8s-ig"; then
-#  echo "Service related backends have been removed"
-#fi
+if backends_exists "${PROJECT_ID}" "k8s-ig"; then
+  echo "Service related backends have been removed"
+fi
 
-(cd "$ROOT/gke-to-gke-vpn/terraform" || terraform destroy -input=false -auto-approve)
-
+(cd "$ROOT/gke-to-gke-vpn/terraform" && terraform destroy -auto-approve)
