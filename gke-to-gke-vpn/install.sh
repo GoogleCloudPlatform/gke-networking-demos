@@ -36,6 +36,8 @@ if [ -z "${PROJECT_ID}" ]
   then echo >&2 "I require default project is set but it's not. Aborting."; exit 1;
 fi
 
+echo "project=\"$PROJECT_ID\"" > "$ROOT"/gke-to-gke-vpn/terraform/terraform.tfvars
+
 ### Ensure that the Forwarding rules quota is met
 if ! meets_quota "${PROJECT_ID}" "FORWARDING_RULES" 8; then
   echo "Refer to https://cloud.google.com/compute/quotas"
@@ -66,70 +68,10 @@ fi
 
 ### enable required service apis in the project
 gcloud services enable \
-  compute.googleapis.com \
-  deploymentmanager.googleapis.com
+  compute.googleapis.com
 
-### create networks and subnets
-if ! deployment_exists "${PROJECT_ID}" "network-deployment"; then
-  gcloud deployment-manager deployments create network-deployment \
-    --config "${ROOT}"/network/network.yaml
-fi
-
-### create clusters
-if ! deployment_exists "${PROJECT_ID}" "cluster-deployment"; then
-  gcloud deployment-manager deployments create cluster-deployment \
-    --config "${ROOT}"/clusters/cluster.yaml
-fi
-
-### Create static ip for VPN connections
-if ! deployment_exists "${PROJECT_ID}" "static-ip-deployment"; then
-  gcloud deployment-manager deployments create static-ip-deployment \
-    --config "${ROOT}"/network/static-ip.yaml
-fi
-
-#Get static VPN IP addresses
-VPN1_IP=$(gcloud compute addresses list --filter="name=vpn1-ip-address" \
-  --format "value(address)")
-VPN2_IP=$(gcloud compute addresses list --filter="name=vpn2-ip-address" \
-  --format "value(address)")
-VPN3_IP=$(gcloud compute addresses list --filter="name=vpn3-ip-address" \
-  --format "value(address)")
-VPN4_IP=$(gcloud compute addresses list --filter="name=vpn4-ip-address" \
-  --format "value(address)")
-
-### Create VPN connection for network1 and network2 in us-east1 &
-### us-central1 regions
-if ! deployment_exists "${PROJECT_ID}" "vpn1-deployment"; then
-  gcloud deployment-manager deployments create vpn1-deployment \
-    --template vpn-custom-subnet.jinja \
-    --properties "region:us-east1,network:projects/${PROJECT_ID}/global/networks/network1,\
-vpn-ip:${VPN1_IP},peerIp:${VPN3_IP},sharedSecret:gke-to-gke-vpn,\
-nodeCIDR:10.11.0.0/28,clusterCIDR:10.128.0.0/19,serviceCIDR:10.228.0.0/20"
-fi
-
-if ! deployment_exists "${PROJECT_ID}" "vpn2-deployment"; then
-  gcloud deployment-manager deployments create vpn2-deployment \
-    --template vpn-custom-subnet.jinja \
-    --properties "region:us-central1,network:projects/${PROJECT_ID}/global/networks/network1,\
-vpn-ip:${VPN2_IP},peerIp:${VPN4_IP},sharedSecret:gke-to-gke-vpn,\
-nodeCIDR:10.12.0.0/28,clusterCIDR:10.138.0.0/19,serviceCIDR:10.238.0.0/20"
-fi
-
-if ! deployment_exists "${PROJECT_ID}" "vpn3-deployment"; then
-  gcloud deployment-manager deployments create vpn3-deployment \
-    --template vpn-custom-subnet.jinja \
-    --properties "region:us-east1,network:projects/${PROJECT_ID}/global/networks/network2,\
-vpn-ip:${VPN3_IP},peerIp:${VPN1_IP},sharedSecret:gke-to-gke-vpn,\
-nodeCIDR:10.1.0.0/28,clusterCIDR:10.108.0.0/19,serviceCIDR:10.208.0.0/20"
-fi
-
-if ! deployment_exists "${PROJECT_ID}" "vpn4-deployment"; then
-  gcloud deployment-manager deployments create vpn4-deployment \
-   --template vpn-custom-subnet.jinja \
-   --properties "region:us-central1,network:projects/${PROJECT_ID}/global/networks/network2,\
-vpn-ip:${VPN4_IP},peerIp:${VPN2_IP},sharedSecret:gke-to-gke-vpn,\
-nodeCIDR:10.2.0.0/28,clusterCIDR:10.118.0.0/19,serviceCIDR:10.218.0.0/20"
-fi
+(cd "$ROOT/gke-to-gke-vpn/terraform"; terraform init -input=false)
+(cd "$ROOT/gke-to-gke-vpn/terraform"; terraform apply -input=false -auto-approve)
 
 ### Fetch cluster1 credentials, deploy nginx pods in cluster1 and create services
 gcloud container clusters get-credentials cluster-deployment-cluster1 \

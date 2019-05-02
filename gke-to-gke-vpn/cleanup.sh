@@ -87,30 +87,4 @@ if backends_exists "${PROJECT_ID}" "k8s-ig"; then
   echo "Service related backends have been removed"
 fi
 
-### Delete clusters
-deployment_exists "${PROJECT_ID}" "cluster-deployment"
-## deployment_exists with output 2 = there are no traces of the specific deployment in the deployment manager, hence no need to attempt deletion
-if [ $? -ne 2 ]; then
-  deployment_deletes "${PROJECT_ID}" "cluster-deployment"
-fi
-
-### Delete VPN connections
-for (( c=1; c<=4; c++ ))
-do
-  deployment_exists "${PROJECT_ID}" "vpn$c-deployment"
-  if [ $? -ne 2 ]; then
-    deployment_deletes "${PROJECT_ID}" "vpn$c-deployment"
-  fi
-done
-
-### Delete static ips
-deployment_exists "${PROJECT_ID}" "static-ip-deployment"
-if [ $? -ne 2 ]; then
-  deployment_deletes "${PROJECT_ID}" "static-ip-deployment"
-fi
-
-### Delete the network
-deployment_exists "${PROJECT_ID}" "network-deployment"
-if [ $? -ne 2 ]; then
-  deployment_deletes "${PROJECT_ID}" "network-deployment"
-fi
+(cd "$ROOT/gke-to-gke-vpn/terraform" && terraform destroy -auto-approve)
