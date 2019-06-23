@@ -1,5 +1,5 @@
 # Kubernetes Engine Networking Demo
-## Kuberenetes Engine Communication Through VPN
+## Kubernetes Engine Communication Through VPN
 ## Table of Contents
 <!--ts-->
 * [Introduction](#introduction)
