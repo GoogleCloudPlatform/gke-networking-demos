@@ -162,10 +162,11 @@ This project will run on macOS, or in a [Google Cloud Shell](https://cloud.googl
 
 When not using Cloud Shell, the following tools are required.
 
-1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )
-2. bash
-3. kubectl - ( >= v1.10.0-gke.0 )
-4. jq
+1. [Terraform >= 0.12.3](https://www.terraform.io/downloads.html)
+2. gcloud cli  ( >= Google Cloud SDK 253.0.0 )
+3. bash
+4. kubectl - ( >= v1.10.0-gke.0 )
+5. jq
 
 ### Versions
 1. Kubernetes Engine >= 1.10.0-gke.0

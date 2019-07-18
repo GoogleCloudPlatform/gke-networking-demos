@@ -21,7 +21,7 @@ The demos in the project demonstrate the following best practices:
 ## Prerequisites
 
 ### Tools
-1. [Google Cloud SDK version >= 204.0.0](https://cloud.google.com/sdk/docs/downloads-versioned-archives)
+1. [Google Cloud SDK version >= 253.0.0](https://cloud.google.com/sdk/docs/downloads-versioned-archives)
 2. [kubectl matching the latest GKE version](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 3. bash or bash compatible shell
 4. [jq](https://stedolan.github.io/jq/)
