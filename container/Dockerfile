@@ -14,4 +14,4 @@
 
 FROM nginx:alpine
 
-RUN apk add --no-cache curl=7.64.0-r1
+RUN apk add --no-cache curl=7.64.0-r2

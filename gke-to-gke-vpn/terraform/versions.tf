@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-provider "google" {
-  version = "2.11.0"
-  region  = var.region1
+terraform {
+  required_version = ">= 0.12"
 }
