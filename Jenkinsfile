@@ -1,4 +1,5 @@
 #!/usr/bin/env groovy
+
 /*
 Copyright 2018 Google LLC
 
@@ -13,152 +14,102 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 */
 
-// The declarative agent is defined in yaml.  It was previously possible to
-// define containerTemplate but that has been deprecated in favor of the yaml
-// format
 // Reference: https://github.com/jenkinsci/kubernetes-plugin
-
 // set up pod label and GOOGLE_APPLICATION_CREDENTIALS (for Terraform)
-def label = "k8s-infra"
-def containerName = "k8s-node"
-def GOOGLE_APPLICATION_CREDENTIALS    = '/home/jenkins/dev/jenkins-deploy-dev-infra.json'
+def containerName = "networking"
+def GOOGLE_APPLICATION_CREDENTIALS = '/home/jenkins/dev/jenkins-deploy-dev-infra.json'
+def jenkins_container_version = env.JENKINS_CONTAINER_VERSION
 
-podTemplate(label: label, yaml: """
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
-    jenkins: build-node
-spec:
-  containers:
-  - name: ${containerName}
-    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:${env.JENKINS_CONTAINER_VERSION}
-    command: ['cat']
-    tty: true
-    volumeMounts:
-    # Mount the dev service account key
-    - name: dev-key
-      mountPath: /home/jenkins/dev
-  volumes:
-  # Create a volume that contains the dev json key that was saved as a secret
-  - name: dev-key
-    secret:
-      secretName: jenkins-deploy-dev-infra
-"""
- ) {
- node(label) {
-  try {
-    // Options covers all other job properties or wrapper functions that apply to entire Pipeline.
-    properties([disableConcurrentBuilds()])
-    // set env variable GOOGLE_APPLICATION_CREDENTIALS for Terraform
-    env.GOOGLE_APPLICATION_CREDENTIALS=GOOGLE_APPLICATION_CREDENTIALS
+podTemplate(
+    containers: [
+        containerTemplate(name: "${containerName}",
+            image: "gcr.io/pso-helmsman-cicd/jenkins-k8s-node:${jenkins_container_version}",
+            command: 'tail -f /dev/null',
+            resourceRequestCpu: '1000m',
+            resourceLimitCpu: '2000m',
+            resourceRequestMemory: '1Gi',
+            resourceLimitMemory: '2Gi'
+        )
+    ],
+    volumes: [secretVolume(mountPath: '/home/jenkins/dev',
+        secretName: 'jenkins-deploy-dev-infra'
+    )]
+) {
+    node(POD_LABEL) {
+        try {
+            // Options covers all other job properties or wrapper functions that apply to entire Pipeline.
+            properties([disableConcurrentBuilds()])
+            // set env variable GOOGLE_APPLICATION_CREDENTIALS for Terraform
+            env.GOOGLE_APPLICATION_CREDENTIALS = GOOGLE_APPLICATION_CREDENTIALS
 
-    stage('Setup') {
-        container(containerName) {
-          // checkout code from scm i.e. commits related to the PR
-          checkout scm
+            stage('Setup') {
+                container(containerName) {
+                    // checkout code from scm i.e. commits related to the PR
+                    checkout scm
 
-          // Setup gcloud service account access
-          sh "gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}"
-          sh "gcloud config set compute/zone ${env.CLUSTER_ZONE}"
-          sh "gcloud config set core/project ${env.PROJECT_ID}"
-          sh "gcloud config set compute/region ${env.REGION}"
+                    // Setup gcloud service account access
+                    sh "gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}"
+                    sh "gcloud config set compute/zone ${env.CLUSTER_ZONE}"
+                    sh "gcloud config set core/project ${env.PROJECT_ID}"
+                    sh "gcloud config set compute/region ${env.REGION}"
 
-          // Build and push container image to pso_examples
-          sh "make build_container"
-         }
-    }
-    stage('Lint') {
-        container(containerName) {
-          sh "make lint"
-      }
-    }
-/*
-    stage('gke-to-gke-peering-create') {
-       container(containerName) {
-          // You can use dir to set the working directory
-          dir('gke-to-gke-peering') {
-            sh './install.sh'
-          }
+                    // Build and push container image to pso_examples
+                    sh "make build_container"
+                }
+            }
+            stage('Lint') {
+                container(containerName) {
+                    sh "make lint"
+                }
+            }
+            stage('gke-to-gke-vpn-create') {
+                container(containerName) {
+                    dir('gke-to-gke-vpn') {
+                        sh './install.sh'
+                    }
+                }
+            }
+
+            stage('gke-to-gke-vpn-validate') {
+                container(containerName) {
+                    dir('gke-to-gke-vpn') {
+                        sh './validate.sh'
+                    }
+                    sh './validate-pod-to-service-communication.sh'
+                }
+            }
+
+            stage('gke-to-gke-vpn-cleanup') {
+                container(containerName) {
+                    dir('gke-to-gke-vpn') {
+                        sh './cleanup.sh'
+                    }
+                }
+            }
+        } catch (err) {
+            stage('Teardown') {
+                container(containerName) {
+                    dir('gke-to-gke-vpn') {
+                        sh './cleanup.sh'
+                    }
+                }
+            }
+            // if any exception occurs, mark the build as failed
+            // and display a detailed message on the Jenkins console output
+            currentBuild.result = 'FAILURE'
+            echo "FAILURE caught echo ${err}"
+            throw err
+        } finally {
+            stage('Teardown') {
+                container(containerName) {
+                    dir('gke-to-gke-vpn') {
+                        sh './cleanup.sh'
+                    }
+                    sh "gcloud auth revoke"
+                }
+            }
         }
     }
-    stage('gke-to-gke-peering-validate') {
-          // Give the service resources time to get their external addresses
-          container(containerName) {
-            dir('gke-to-gke-peering') {
-              sh './validate.sh'
-            }
-
-            sh './validate-pod-to-service-communication.sh'
-          }
-      }
-
-    stage('gke-to-gke-peering-cleanup') {
-          container(containerName) {
-            dir('gke-to-gke-peering') {
-              sh './cleanup.sh'
-            }
-          }
-      }
-*/
-    stage('gke-to-gke-vpn-create') {
-          container(containerName) {
-            dir('gke-to-gke-vpn') {
-              sh './install.sh'
-            }
-          }
-      }
-
-    stage('gke-to-gke-vpn-validate') {
-          container(containerName) {
-            dir('gke-to-gke-vpn') {
-              sh './validate.sh'
-            }
-            sh './validate-pod-to-service-communication.sh'
-          }
-    }
-
-    stage('gke-to-gke-vpn-cleanup') {
-          container(containerName) {
-            dir('gke-to-gke-vpn') {
-              sh './cleanup.sh'
-            }
-          }
-    }
-  }
-   catch (err) {
-      stage('Teardown') {
-        container(containerName) {
-//          dir('gke-to-gke-peering') {
-//            sh './cleanup.sh'
-//          }
-          dir('gke-to-gke-vpn') {
-            sh './cleanup.sh'
-          }
-        }
-      }
-      // if any exception occurs, mark the build as failed
-      // and display a detailed message on the Jenkins console output
-      currentBuild.result = 'FAILURE'
-      echo "FAILURE caught echo ${err}"
-      throw err
-   }
-   finally {
-     stage('Teardown') {
-        container(containerName) {
-//          dir('gke-to-gke-peering') {
-//
-//            sh './cleanup.sh'
-//          }
-          dir('gke-to-gke-vpn') {
-            sh './cleanup.sh'
-          }
-          sh "gcloud auth revoke"
-        }
-      }
-    }
-  }
 }
